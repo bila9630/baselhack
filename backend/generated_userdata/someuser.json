@@ -1,0 +1,38 @@
+{
+    "user": {
+      "id": "12345",
+      "name": "John Doe",
+      "location": {
+        "country": "United States",
+        "city": "San Francisco",
+        "timezone": "PST"
+      }
+    },
+    "browserData": {
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36",
+      "language": "en-US",
+      "platform": "Windows",
+      "deviceType": "desktop",
+      "screenResolution": {
+        "width": 1920,
+        "height": 1080
+      },
+      "referrer": "https://example.com/signup",
+      "cookiesEnabled": true,
+      "doNotTrack": false
+    },
+    "questionnaire": [
+      {
+        "question": "What is your preferred contract length?",
+        "answer": "12 months",
+        "recommendedAnswer": "12 months",
+        "contextualRecommendations": {
+          "basedOnLocation": "12 months",
+          "basedOnDeviceType": "6 months",
+          "basedOnPreviousUsers": "12 months"
+        },
+        "timestamp": "2023-11-01T10:30:00Z"
+      }
+    ]
+  }
+  
