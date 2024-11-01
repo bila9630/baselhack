@@ -4,21 +4,18 @@
             "src": "frontend/package.json",
             "use": "@vercel/static-build",
             "config": {
-                "distDir": "frontend/dist/chaton/browser"
+                "distDir": "dist/chaton/browser"
             }
         }
     ],
     "routes": [
-        {
-            "handle": "filesystem"
-        },
         {
             "src": "/assets/(.*)",
             "dest": "/assets/$1"
         },
         {
             "src": "/(.*)",
-            "dest": "/frontend/dist/chaton/browser/index.html"
+            "dest": "/index.html"
         }
     ]
 }
