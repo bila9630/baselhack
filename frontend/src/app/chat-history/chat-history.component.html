@@ -1,0 +1,6 @@
+<p>chat-history works!</p>
+
+@for (msg of chatMessages$ | async; track msg.message) {
+    <!-- if statement chatbubble position-->
+    <p>{{ msg.message }}</p>
+}
