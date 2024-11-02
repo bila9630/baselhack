@@ -106,7 +106,7 @@ class ExtractData(Resource):
             json_for_frontend  = send_user_input(user_input=source, fields=fields, user_id=user_id)
             return jsonify(json_for_frontend)
         except Exception as err:
-            return jsonify({recommendedQuestion = "Sorry, I didn't understend your answer."})
+            return jsonify({"recommendedQuestion":"Sorry, I didn't understend your answer."})
         
 
 
