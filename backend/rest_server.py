@@ -98,6 +98,7 @@ class ExtractData(Resource):
         
         # Here you can add logic to process RequestForExtraction
         fields = request_for_extraction.get('fields', [])
+        user_id = request_for_extraction.get('user_id', None)
         source = request_for_extraction.get('source', '')
         user_id = request_for_extraction.get('user_id', null)
 
