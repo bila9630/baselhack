@@ -38,15 +38,47 @@ class Application(Resource):
                 field2:
                   type: string
                   example: "value2"
-        responses:
-          201:
-            description: Success response
-            schema:
-              type: object
-              properties:
-                status:
-                  type: string
-                  example: "success"
+            responses:
+              200:
+                description: Extracted data response
+                schema:
+                  type: object
+                  properties:
+                    field1:
+                      type: string
+                      example: "value1"
+                    field2:
+                      type: string
+                      example: "value2"
+                    recommendedQuestion:
+                      type: string
+                      example: "What do you think about this?"
+                    additionalData:
+                      type: object
+                      properties:
+                        is_done:
+                          type: boolean
+                          example: true
+                        recommendation_bubbles:
+                          type: array
+                          items:
+                            type: string
+                            example: null
+                        target_information:
+                          type: array
+                          items:
+                            type: string
+                            example: "insurance_length"
+                    knownUserInfo:
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                          example: "123 Main Street, Cityville, ABC123"
+                        date_of_birth:
+                          type: string
+                          format: date
+                          example: "1985-07-15"
         """
         completed_form = request.get_json()
         
@@ -81,20 +113,46 @@ class ExtractData(Resource):
                   type: string
                   example: "example_source"
         responses:
-          200:
-            description: Extracted data response
-            schema:
-              type: object
-              properties:
-                field1:
-                  type: string
-                  example: "value1"
-                field2:
-                  type: string
-                  example: "value2"
-                recommendedQuestion:
-                  type: string
-                  example: "What do you think about this?"
+            200:
+                description: Extracted data response
+                schema:
+                type: object
+                properties:
+                    field1:
+                    type: string
+                    example: "value1"
+                    field2:
+                    type: string
+                    example: "value2"
+                    recommendedQuestion:
+                    type: string
+                    example: "What do you think about this?"
+                    additionalData:
+                    type: object
+                    properties:
+                        is_done:
+                            type: boolean
+                            example: true
+                        recommendation_bubbles:
+                                type: array
+                                items:
+                                    type: string
+                                    example: null
+                        target_information:
+                        type: array
+                        items:
+                            type: string
+                            example: "insurance_length"
+                    knownUserInfo:
+                    type: object
+                    properties:
+                        address:
+                        type: string
+                        example: "123 Main Street, Cityville, ABC123"
+                        date_of_birth:
+                        type: string
+                        format: date
+                        example: "1985-07-15"
         """
         request_for_extraction = request.get_json()
         
