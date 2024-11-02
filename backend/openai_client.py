@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 import json
 import warnings
 from bubble_generation import get_bubbles
+from datetime import date, datetime
 
 load_dotenv()
 OpenAiClient = OpenAI(
@@ -130,20 +131,59 @@ def parse_user_data(response):
         print("Failed to turn chatgpts response to JSON. Response received:")
         print(response)
         return None
+    
+def price_per_year(user):
+    date_of_birth = datetime.strptime(user.date_of_birth, '%Y-%m-%d').date()
+    age = AgeCalc(date_of_birth)
+    base_age = 65
+    if user.smoking_status:
+        base_age -= 5
+    if user.gender.lower() == "male":
+        base_age -= 5
+    death_risk = (age / (5 * base_age)) ** 2
+    price = int((int(user.insurance_amount) * death_risk) / int(user.insurance_length))
+    return price
 
+def AgeCalc(birthDate):
+    today = date.today()
+    age = today.year - birthDate.year - ((today.month, today.day) < (birthDate.month, birthDate.day))
+    return age
+
+def get_question_explanation(target_information):
+    explanation = {
+        "date_of_birth": "Age is a key factor in calculating risk, as it impacts life expectancy and health considerations.",
+        "smoking_status": "Smoking status is a major indicator of health risk, as it can lead to conditions that increase insurance risk.",
+        "weight": "Weight, along with height, helps assess health risks such as obesity-related conditions.",
+        "height": "Height is used in BMI calculation to determine health risks",
+        "profession": "Certain professions carry higher risk levels due to potential hazards, affecting insurance rates."
+    }
+    relevant_texts = [explanation[target] for target in target_information if target in explanation]
+    if relevant_texts:
+        return "\n".join(relevant_texts)
+    return None
+
+        
 
 def generate_json_for_frontend(user_data, user, is_done = False):
     known_user_info = user.get_known_user_json()
     recommendedQuestion = user_data.get('recommendedQuestion')
+    target_information = user_data.get('target_information')
+    if isinstance(target_information, str):
+        target_information = target_information.split(',')
+        
     if is_done:
         recommendedQuestion = 'We are done here! Thanks for chatting with me'
     additional_data = {
     'recommendedQuestion': recommendedQuestion,
-    'target_information': user_data.get('target_information'),
-    'recommendation_bubbles': get_bubbles(user_data.get('target_information')),
-    'is_done' : is_done
+    'target_information': target_information,
+    'recommendation_bubbles': get_bubbles(target_information),
+    'is_done' : is_done,
+    'question_explanation': get_question_explanation(target_information)
+        
     }
-    
+    if is_done:
+        additional_data['price_per_year'] = price_per_year(user)
+        
     json_for_frontend = {
         'knownUserInfo': known_user_info,
         'additionalData': additional_data
@@ -183,16 +223,16 @@ def send_user_input(user_input, fields = [], user_id = 0):
 
 
 if __name__ == "__main__":
-    # pass
-    client = ChatClient()
-    user = UserInformation()
+    pass
+    # client = ChatClient()
+    # user = UserInformation()
 
-    print('CHATON: Hello Human, im CHATON and here to assist you with an insurance. Tell me about yourself!')
+    # print('CHATON: Hello Human, im CHATON and here to assist you with an insurance. Tell me about yourself!')
     
-    for i in range(10):
-        user_input = input("User: ")
-        json_for_frontend  = send_user_input(user_input, user_id=2)
-        print(f'INFO: Json Data for frontend: {json_for_frontend}')   
-        print('CHATON: {}'.format(json_for_frontend['additionalData']['recommendedQuestion']))
+    # for i in range(10):
+    #     user_input = input("User: ")
+    #     json_for_frontend  = send_user_input(user_input, user_id=200)
+    #     print(f'INFO: Json Data for frontend: {json_for_frontend}')   
+    #     print('CHATON: {}'.format(json_for_frontend['additionalData']['recommendedQuestion']))
 
             

@@ -11,7 +11,7 @@ export class PromptService {
     {
       message: "Hello! Tell me about yourself, so I can help you better.",
       author: "chaton",
-      id: ulid(),
+      id: "123",
     },
   ]);
 
@@ -21,5 +21,6 @@ export class PromptService {
     const newPrompt: PromtMessage = { message, author, id: ulid() };
     this._prompts$.next([...this._prompts$.value, newPrompt]);
     console.log(this._prompts$.value);
+    return newPrompt.id;
   }
 }

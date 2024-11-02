@@ -28,6 +28,4 @@ def get_bubbles(target_information):
             print(f'Key {target} is unknown!')
     return all_bubbles_to_return[:5]
 
-bubbles = get_bubbles(['gender'])
-print(bubbles)
 

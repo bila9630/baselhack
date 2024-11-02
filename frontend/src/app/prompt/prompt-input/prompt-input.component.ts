@@ -12,7 +12,6 @@ import {
   debounceTime,
   distinctUntilChanged,
   exhaustMap,
-  of,
   take,
   tap,
 } from "rxjs";
@@ -20,6 +19,7 @@ import { MatIcon, MatIconModule } from "@angular/material/icon";
 import { MatButtonModule, MatIconButton } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { ChatGptService } from "../../chat-gpt/chat-gpt.service";
+import { BubbleService } from "../../bubble/bubble.service";
 
 @Component({
   selector: "app-prompt-input",
@@ -45,6 +45,8 @@ export class PromptInputComponent implements OnInit {
 
   promptService = inject(PromptService);
 
+  bubbleService = inject(BubbleService);
+
   chatGptService = inject(ChatGptService);
 
   voiceRecognitionService = inject(VoiceRecognitionService);
@@ -58,6 +60,7 @@ export class PromptInputComponent implements OnInit {
   ngOnInit() {
     this.speechApiExists =
       this.voiceRecognitionService.speechRecognitionApiInBrowser();
+    console.log(this.bubbleService._bubble$.value);
 
     this.voiceRecognitionService.lastSpeech
       .pipe(
@@ -92,10 +95,17 @@ export class PromptInputComponent implements OnInit {
       .subscribe((response) => {
         console.log(response);
 
-        this.promptService.addNewPromptToChat(
+        const newChatonPromptId = this.promptService.addNewPromptToChat(
           response.additionalData.recommendedQuestion,
           "chaton",
         );
+
+        const mockedResponse = ["test question 1", "test question 2"];
+        for (let q of mockedResponse) {
+          this.bubbleService.addNewBubble(this.question, newChatonPromptId);
+          console.log(q);
+          console.log(this.bubbleService._bubble$.value);
+        }
       });
 
     this.userInput = "";
