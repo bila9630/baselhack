@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { RealtimeClient } from '@openai/realtime-api-beta';
 import { CommonModule } from '@angular/common';
+import { environment } from '../../environments/environment.development';
 
 @Component({
   selector: 'app-speech-ai',
@@ -67,7 +68,7 @@ export class SpeechAiComponent implements OnInit, OnDestroy {
     // Initialize OpenAI Realtime client
     try {
       this.client = new RealtimeClient({
-        apiKey: "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",
+        apiKey: environment.openAiKey,
         dangerouslyAllowAPIKeyInBrowser: true
       });
     } catch (error) {
