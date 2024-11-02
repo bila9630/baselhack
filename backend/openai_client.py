@@ -224,16 +224,16 @@ def send_user_input(user_input, fields = [], user_id = 0):
 
 
 if __name__ == "__main__":
-    
-    client = ChatClient()
-    user = UserInformation()
+    pass
+    # client = ChatClient()
+    # user = UserInformation()
 
-    print('CHATON: Hello Human, im CHATON and here to assist you with an insurance. Tell me about yourself!')
+    # print('CHATON: Hello Human, im CHATON and here to assist you with an insurance. Tell me about yourself!')
     
-    for i in range(10):
-        user_input = input("User: ")
-        json_for_frontend  = send_user_input(user_input, user_id=200)
-        print(f'INFO: Json Data for frontend: {json_for_frontend}')   
-        print('CHATON: {}'.format(json_for_frontend['additionalData']['recommendedQuestion']))
+    # for i in range(10):
+    #     user_input = input("User: ")
+    #     json_for_frontend  = send_user_input(user_input, user_id=200)
+    #     print(f'INFO: Json Data for frontend: {json_for_frontend}')   
+    #     print('CHATON: {}'.format(json_for_frontend['additionalData']['recommendedQuestion']))
 
             
