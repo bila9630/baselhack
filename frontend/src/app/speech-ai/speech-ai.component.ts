@@ -1,18 +1,26 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { RealtimeClient } from '@openai/realtime-api-beta';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-speech-ai',
   templateUrl: './speech-ai.component.html',
   styleUrls: ['./speech-ai.component.scss'],
   standalone: true,
-  imports: [MatButtonModule]
+  imports: [MatButtonModule, CommonModule]
 })
 export class SpeechAiComponent implements OnInit, OnDestroy {
   public recognition: any;
   private client!: RealtimeClient;
   isListening = false;
+  public aiResponseText: string = '';
+  private currentAudioContext?: AudioContext;
+  private currentSource?: AudioBufferSourceNode;
+  private currentItemId?: string;
+  private currentSampleCount: number = 0;
+  private sampleInterval?: any;
+  private lastProcessedItemId?: string;
 
   constructor() {
     // Initialize speech recognition
@@ -77,11 +85,70 @@ export class SpeechAiComponent implements OnInit, OnDestroy {
     });
 
     // Handle conversation updates
-    this.client.on('conversation.updated', (event:any) => {
-      const { item, delta } = event;
+    this.client.on('conversation.updated', (event: any) => {
+      const { item } = event;
       console.log('Response:', item);
-      // Here you can handle the AI's response
-      // You might want to use text-to-speech to speak the response
+      
+      // Skip if we've already processed this item
+      if (this.lastProcessedItemId === item.id) {
+        return;
+      }
+      
+      if (item.status === 'completed' && item.formatted?.audio) {
+        try {
+          // Stop any currently playing audio
+          this.stopCurrentAudio();
+
+          // Only process if we have valid audio data
+          if (item.formatted.audio.length > 0) {
+            this.lastProcessedItemId = item.id;
+            this.currentItemId = item.id;
+            this.currentSampleCount = 0;
+
+            // Create new audio context and source
+            this.currentAudioContext = new AudioContext();
+            const audioBuffer = this.currentAudioContext.createBuffer(
+              1, // number of channels
+              item.formatted.audio.length,
+              24000 // sample rate
+            );
+            const channelData = audioBuffer.getChannelData(0);
+            
+            // Convert Int16Array to Float32Array for audio playback
+            for (let i = 0; i < item.formatted.audio.length; i++) {
+              channelData[i] = item.formatted.audio[i] / 32768.0;
+            }
+            
+            this.currentSource = this.currentAudioContext.createBufferSource();
+            this.currentSource.buffer = audioBuffer;
+            this.currentSource.connect(this.currentAudioContext.destination);
+            
+            // Track sample count during playback
+            const startTime = this.currentAudioContext.currentTime;
+            this.sampleInterval = setInterval(() => {
+              if (this.currentAudioContext) {
+                const elapsedTime = this.currentAudioContext.currentTime - startTime;
+                this.currentSampleCount = Math.floor(elapsedTime * 24000); // 24000 is sample rate
+              }
+            }, 100); // Update every 100ms
+
+            // Clean up when playback ends
+            this.currentSource.onended = () => {
+              this.stopCurrentAudio();
+            };
+
+            this.currentSource.start();
+          }
+
+          // Comment out text display
+          if (item.formatted.transcript) {
+            this.aiResponseText = item.formatted.transcript;
+          }
+        } catch (error) {
+          console.error('Error playing audio:', error);
+          this.stopCurrentAudio();
+        }
+      }
     });
 
     // Connect to OpenAI
@@ -93,7 +160,8 @@ export class SpeechAiComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    // Clean up
+    this.stopCurrentAudio();
+    this.lastProcessedItemId = undefined;
     this.client?.disconnect();
   }
 
@@ -125,5 +193,41 @@ export class SpeechAiComponent implements OnInit, OnDestroy {
 
   isRecognitionAvailable(): boolean {
     return !!this.recognition;
+  }
+
+  private stopCurrentAudio() {
+    // Cancel the response if we have a current item
+    if (this.currentItemId) {
+      try {
+        this.client.cancelResponse(this.currentItemId, this.currentSampleCount);
+      } catch (error) {
+        console.error('Error canceling response:', error);
+      }
+    }
+
+    // Clear the sample tracking interval
+    if (this.sampleInterval) {
+      clearInterval(this.sampleInterval);
+      this.sampleInterval = undefined;
+    }
+
+    // Stop and clean up audio
+    if (this.currentSource) {
+      try {
+        this.currentSource.stop();
+      } catch (e) {
+        // Ignore errors when stopping already stopped source
+      }
+      this.currentSource = undefined;
+    }
+
+    if (this.currentAudioContext) {
+      this.currentAudioContext.close();
+      this.currentAudioContext = undefined;
+    }
+
+    // Reset tracking variables
+    this.currentItemId = undefined;
+    this.currentSampleCount = 0;
   }
 }
