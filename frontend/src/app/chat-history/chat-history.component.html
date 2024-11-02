@@ -2,11 +2,15 @@
     <div class="chat-messages">
         @for (msg of chatMessages$ | async; track msg.message) {
             <!-- Conditional rendering for chat bubbles -->
-            @if (this.msg.author  == "chaton") {
+            @if (this.msg.author == "chaton") {
                 <p class="bubble chaton text-end">{{ msg.message }}</p>
+            @if(msg.id == lastChatonMessageId){
+                <app-chaton-bot/>
+            }
             } @else {
-            <p class="bubble client text-start">{{ msg.message }}</p>
-                    }
+                <p class="bubble client text-start">{{ msg.message }}</p>
+            }
+
         }
     </div>
 </div>
