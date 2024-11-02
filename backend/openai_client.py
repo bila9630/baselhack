@@ -23,8 +23,11 @@ Here is the information that the client gave you:
 
 Write the answers to the specified questions in json format. 
 If the answer to the specified question is not in the client's response, set the value as null. 
-Additionally write a clarifying question that you need to ask the client in the "recommendedQuestion" field. 
-To shorten the questions, which you write very kind and friendly, try to ask for only one or two missing pieces of Information. Embed the question into a question about a topic.
+
+Decide on the next pieces of information you want to get from the user, and write the keys into the field 'target_information'
+Additionally write a clarifying question that you need to ask the client about the target_information in the "recommendedQuestion" field. 
+Ask very kind and friendly, try to ask for only one or two missing pieces of Information. Embed the question into a question about a topic.
+
 """
 
     )
@@ -74,7 +77,7 @@ class UserInformation:
             if hasattr(self, key):
                 if value is not None:
                     setattr(self, key, value)
-            elif key == 'recommendedQuestion': 
+            elif key in ['recommendedQuestion', 'target_information']: 
                 pass
             else:
                 warnings.warn(f"Attribute '{key}' does not exist on UserInformation and will be ignored.", stacklevel=2)
@@ -124,10 +127,13 @@ def parse_user_data(response):
 
 def generate_json_for_frontend(user_data, known_user_info, user):
     known_user_info = user.get_known_user_json()
+    
     additional_data = {
-        'recommendedQuestion': user_data['recommendedQuestion'],
-        'recommendation_bubbles': [None]
+    'recommendedQuestion': user_data.get('recommendedQuestion'),
+    'target_information': user_data.get('target_information'),
+    'recommendation_bubbles': [None]
     }
+    
     json_for_frontend = {
         'knownUserInfo': known_user_info,
         'additionalData': additional_data
@@ -162,16 +168,16 @@ def send_user_input(user_input, fields = [], user_id = 0):
 
 
 if __name__ == "__main__":
-    pass
-    # client = ChatClient()
-    # user = UserInformation()
+    # pass
+    client = ChatClient()
+    user = UserInformation()
 
-    # print('CHATON: Hello Human, im CHATON and here to assist you with an insurance. Tell me about yourself!')
+    print('CHATON: Hello Human, im CHATON and here to assist you with an insurance. Tell me about yourself!')
     
-    # for i in range(10):
-    #     user_input = input("User: ")
-    #     json_for_frontend  = send_user_input(user_input, user_id=2)
-    #     print(f'INFO: Json Data for frontend: {json_for_frontend}')   
-    #     print('CHATON: {}'.format(json_for_frontend['additionalData']['recommendedQuestion']))
+    for i in range(10):
+        user_input = input("User: ")
+        json_for_frontend  = send_user_input(user_input, user_id=2)
+        print(f'INFO: Json Data for frontend: {json_for_frontend}')   
+        print('CHATON: {}'.format(json_for_frontend['additionalData']['recommendedQuestion']))
 
             
