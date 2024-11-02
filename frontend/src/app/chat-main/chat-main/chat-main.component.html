@@ -5,7 +5,17 @@
         <mat-icon>close</mat-icon>
       </button>
     </div>
-    <p class="p-3">{{ explanation }}</p>
+      @for (e of explanation; track explanation) {
+        <div class="container">
+          <div class="row">
+            <div class="col-12">
+              <h3 class="text-center">Explanation</h3>
+              <p>{{ e }}</p>
+            </div>
+          </div>
+        </div>
+      }
+    <p class="p-3"></p>
   </mat-drawer>
 
   <mat-drawer-content>
@@ -17,12 +27,29 @@
               (explainQuestion)="explanation = $event; drawer.toggle()"
             />
           </div>
-            <div class="col-5">
-                <div class="h-50">
-                    <h3 class="text-center">Customer data</h3>
+          <div class="col-5">
+            <div class="h-50">
+              <h3 class="text-center">Customer data</h3>
+              <div class="container">
+                <div class="row">
+                  @for (
+                    userProperty of userData$ | async;
+                    track userProperty.key
+                  ) {
+                    <div class="col-6">
+                      <p>
+                        <span class="fw-bold">{{
+                          userProperty.key | userPropertiesKey
+                        }}</span>
+                        : {{ userProperty.value }}
+                      </p>
+                    </div>
+                  }
                 </div>
-                <div class="h-50">test</div>
+              </div>
             </div>
+            <div class="h-50">DUC PUT YOUR STUFF HERE</div>
+          </div>
         </div>
       </div>
       <app-prompt-input />

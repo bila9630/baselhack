@@ -28,7 +28,7 @@ export class ChatHistoryComponent {
   bubbleService = inject(BubbleService);
   lastChatonMessageId = "";
 
-  @Output() explainQuestion = new EventEmitter<string>();
+  @Output() explainQuestion = new EventEmitter<string[]>();
 
   bubbles$ = this.bubbleService.bubble$;
   chatMessages$ = this.promptService.prompts$.pipe(
