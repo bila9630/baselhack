@@ -3,7 +3,7 @@ from flask_restful import Resource, Api
 from flasgger import Swagger
 from flask_cors import CORS
 from openai_client import send_user_input
-
+import traceback
 
 app = Flask(__name__)
 CORS(app)
@@ -165,10 +165,15 @@ class ExtractData(Resource):
         try:
             json_for_frontend  = send_user_input(user_input=source, fields=fields, user_id=user_id)
             return jsonify(json_for_frontend)
+
         except Exception as err:
-            print(f'There was an error {err}')
-            return jsonify({"recommendedQuestion":"Sorry, I didn't understend your answer.", "error":err})
-          
+            error_details = traceback.format_exc()
+            print(f'There was an error: {error_details}')  
+            return jsonify({
+                "recommendedQuestion": "Sorry, I didn't understand your answer.",
+                "error": str(err),  
+                "error_details": error_details  
+            })
 
 
 class NewTemporalId(Resource):
