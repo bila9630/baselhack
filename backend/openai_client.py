@@ -131,7 +131,12 @@ def parse_user_data(response):
         print(response)
         return None
 
+def get_monthly_cost(user):
+    pass
+    return 0
+    
 
+    
 def generate_json_for_frontend(user_data, user, is_done = False):
     known_user_info = user.get_known_user_json()
     recommendedQuestion = user_data.get('recommendedQuestion')
@@ -143,7 +148,9 @@ def generate_json_for_frontend(user_data, user, is_done = False):
     'recommendation_bubbles': get_bubbles(user_data.get('target_information')),
     'is_done' : is_done
     }
-    
+    if is_done:
+        additional_data['monthly_cost'] = get_monthly_cost(user)
+        
     json_for_frontend = {
         'knownUserInfo': known_user_info,
         'additionalData': additional_data
