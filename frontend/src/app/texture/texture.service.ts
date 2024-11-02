@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Assets, Texture } from "pixi.js";
+import { Assets, Texture, TexturePool } from "pixi.js";
 
 @Injectable({
   providedIn: "root",
@@ -8,10 +8,13 @@ export class TextureService {
   private textures: Map<string, Texture> = new Map<string, Texture>([]);
 
   private chatonAssets: { [key: string]: string } = {
-    chatonIdle: "chaton_bot/chaton_closed_mouth.png",
+    chatonIdle: "chaton_bot/chaton_closed_mouth_smol.svg",
   };
 
   async loadAssets(): Promise<void> {
+    // TexturePool.textureOptions.scaleMode = "nearest";
+    // TexturePool.textureOptions.minFilter = "nearest";
+    // TexturePool.textureOptions.magFilter = "nearest";
     const assets: { [key: string]: string } = {
       ...this.chatonAssets,
     };
@@ -20,6 +23,16 @@ export class TextureService {
       const newTexture: Texture = await Assets.load(path);
       this.textures.set(name, newTexture);
     }
+
+    Assets.addBundle("chatonTalking", {
+      chatonTalking1: "chaton_bot/chaton_talking_0.png",
+      chatonTalking2: "chaton_bot/chaton_talking_1.png",
+      chatonTalking3: "chaton_bot/chaton_talking_2.png",
+      chatonTalking4: "chaton_bot/chaton_talking_3.png",
+    });
+
+    const chatonTalkingBundle = await Assets.loadBundle("chatonTalking");
+    console.log(chatonTalkingBundle);
   }
 
   getTexture(name: string): Texture {
