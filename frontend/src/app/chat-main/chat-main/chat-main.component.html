@@ -5,16 +5,16 @@
         <mat-icon>close</mat-icon>
       </button>
     </div>
-      @for (e of explanation; track explanation) {
-        <div class="container">
-          <div class="row">
-            <div class="col-12">
-              <h3 class="text-center">Explanation</h3>
-              <p>{{ e }}</p>
-            </div>
+    @for (e of explanation; track explanation) {
+      <div class="container">
+        <div class="row">
+          <div class="col-12">
+            <h3 class="text-center">Explanation</h3>
+            <p>{{ e }}</p>
           </div>
         </div>
-      }
+      </div>
+    }
     <p class="p-3"></p>
   </mat-drawer>
 
@@ -28,7 +28,7 @@
             />
           </div>
           <div class="col-5">
-            <div class="h-50">
+            <div class="h-75">
               <h3 class="text-center">Customer data</h3>
               <div class="container">
                 <div class="row">
@@ -48,7 +48,13 @@
                 </div>
               </div>
             </div>
-            <div class="h-50">DUC PUT YOUR STUFF HERE</div>
+            @if (chatGpt.isDone) {
+              <div class="h-50 text-center">
+                <h3>Calculated insurance</h3>
+                  <p>Your calculated insurance per year could be: {{chatGpt.pricePerYear}} CHF</p>
+                  <button mat-raised-button>Download Application form</button>
+              </div>
+            }
           </div>
         </div>
       </div>
