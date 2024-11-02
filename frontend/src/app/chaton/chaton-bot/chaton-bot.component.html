@@ -1,2 +1,4 @@
-<p>chaton-bot works!</p>
-<div class="d-flex" #container></div>
+<div class="text-center" #container></div>
+
+<button (click)="chatonStateService.changeCurrentState('talk')">talk</button>
+<button (click)="chatonStateService.changeCurrentState('listen')">stop</button>

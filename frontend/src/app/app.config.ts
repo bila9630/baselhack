@@ -5,6 +5,8 @@ import {
 } from "@angular/core";
 import { provideAnimationsAsync } from "@angular/platform-browser/animations/async";
 import { TextureService } from "./texture/texture.service";
+import { routes } from "./app.routes";
+import { provideRouter } from "@angular/router";
 
 const initializeApp = (textureService: TextureService) => {
   return () =>
@@ -13,6 +15,7 @@ const initializeApp = (textureService: TextureService) => {
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideRouter(routes),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideAnimationsAsync(),
     {
