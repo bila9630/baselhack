@@ -1,11 +1,28 @@
-<div class="chat-container">
-  <div class="chat-messages" #scrollMe [scrollTop]="scrollMe.offsetHeight">
+<div class="chat-container" id="chat">
+  <div class="chat-messages">
     @for (msg of chatMessages$ | async; track msg.message) {
       <!-- Conditional rendering for chat bubbles -->
       @if (this.msg.author == "chaton") {
         <div class="d-flex w-100 justify-content-end align-items-start">
           <div class="d-flex justify-content-end">
-            <p class="bubble chaton text-end">{{ msg.message }}</p>
+            <span
+              class="d-flex justify-content-center bubble chaton text-start"
+            >
+              <span>
+                {{
+                  msg.message | writing: msg.id == lastChatonMessageId | async
+                }}
+                <button
+                  (click)="
+                    explainQuestion.emit(' Its needed because its needed')
+                  "
+                  class="small-icon-button"
+                  mat-icon-button
+                >
+                  <mat-icon>info</mat-icon>
+                </button>
+              </span>
+            </span>
           </div>
           @if (msg.id == lastChatonMessageId) {
             <app-chaton-bot />

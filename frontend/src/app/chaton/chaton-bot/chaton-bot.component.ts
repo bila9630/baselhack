@@ -6,6 +6,7 @@ import {
   NgZone,
   OnInit,
   ViewChild,
+  ViewContainerRef,
 } from "@angular/core";
 import {
   AnimatedSprite,
@@ -25,8 +26,10 @@ import { ChatonStateService } from "../chaton-state/chaton-state.service";
   templateUrl: "./chaton-bot.component.html",
   styleUrl: "./chaton-bot.component.scss",
 })
-export class ChatonBotComponent implements OnInit, AfterViewInit {
+export class ChatonBotComponent implements AfterViewInit {
   @ViewChild("container") protected container!: ElementRef;
+
+  @ViewChild("talk") talk!: ElementRef;
 
   application = new Application();
 
@@ -40,16 +43,6 @@ export class ChatonBotComponent implements OnInit, AfterViewInit {
 
   chaton: Container | null = null;
 
-  ngOnInit() {
-    this.chatonStateService.changeState.subscribe((state) => {
-      if (state === "talk") {
-        this.switchChatonToTalkingState();
-      } else {
-        this.switchChatonToIdleState();
-      }
-    });
-  }
-
   ngAfterViewInit(): void {
     this.ngZone.runOutsideAngular(async (): Promise<void> => {
       await this.application.init({
@@ -60,12 +53,20 @@ export class ChatonBotComponent implements OnInit, AfterViewInit {
       });
       this.container.nativeElement.appendChild(this.application.canvas);
       this.switchChatonToIdleState();
+
+      this.chatonStateService.changeState.subscribe((state) => {
+        if (state === "talk") {
+          this.switchChatonToTalkingState();
+        } else {
+          this.switchChatonToIdleState();
+        }
+      });
     });
   }
 
   switchChatonToIdleState() {
     (this.chaton as AnimatedSprite)?.stop();
-    this.application.stage.removeChild(this.chaton as Container);
+    this.application.stage?.removeChild(this.chaton as Container);
     const texture: Texture = this.textureService.getTexture(
       "chatonIdle",
     ) as Texture;
@@ -78,7 +79,7 @@ export class ChatonBotComponent implements OnInit, AfterViewInit {
   }
 
   switchChatonToTalkingState() {
-    this.application.stage.removeChild(this.chaton as Container);
+    this.application.stage?.removeChild(this.chaton as Container);
     const animatedSprite: AnimatedSprite = new AnimatedSprite(
       this.textureService.chatonAnimation,
     );
