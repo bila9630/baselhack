@@ -10,7 +10,7 @@ import { MatIcon } from "@angular/material/icon";
   templateUrl: "./speech-ai.component.html",
   styleUrls: ["./speech-ai.component.scss"],
   standalone: true,
-  imports: [MatButtonModule, CommonModule]
+  imports: [MatButtonModule, CommonModule, MatIcon]
 })
 export class SpeechAiComponent implements OnInit, OnDestroy {
   public recognition: any;
