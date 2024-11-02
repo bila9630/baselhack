@@ -8,12 +8,11 @@ app = Flask(__name__)
 api = Api(app)
 swagger = Swagger(app)
 
-# Structure for storing extracted data
-class ExtractedData:
-    def __init__(self, field1, field2, recommended_question):
-        self.field1 = field1
-        self.field2 = field2
-        self.recommended_question = recommended_question
+def get_id_gen():
+    for i in range(0, 99999):
+        yield i
+
+get_id = get_id_gen()
 
 # Temporary storage for extracted data
 extracted_data_storage = []
@@ -100,11 +99,30 @@ class ExtractData(Resource):
 
         print("Received RequestForExtraction:", request_for_extraction)
 
-        json_for_frontend  = send_user_input(user_input=source, fields=fields)
+        json_for_frontend  = send_user_input(user_input=source, fields=fields, id)
         
         return jsonify(json_for_frontend)
 
+
+class NewTemporalId(Resource):
+    
+    def get(self):
+        """
+        Generate a new temporal ID
+        ---
+        responses:
+          200:
+            description: New temporal ID
+            schema:
+              type: integer
+              example: 1
+        """
+        
+        return jsonify(temporal_id=next(get_id))
+
+
 # Adding resources to the API
+api.add_resource(NewTemporalId,'/application/new_temporal_id')
 api.add_resource(Application, '/application/')
 api.add_resource(ExtractData, '/application/chat/extract_data')
 
