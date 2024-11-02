@@ -6,9 +6,9 @@ import {
 import { provideAnimationsAsync } from "@angular/platform-browser/animations/async";
 import { TextureService } from "./texture/texture.service";
 
-const initializeApp = (assetsService: TextureService) => {
+const initializeApp = (textureService: TextureService) => {
   return () =>
-    assetsService.loadAssets().then(() => console.log("Textures loaded"));
+    textureService.loadAssets().then(() => console.log("Textures loaded"));
 };
 
 export const appConfig: ApplicationConfig = {

@@ -6,7 +6,8 @@ import {
   NgZone,
   ViewChild,
 } from "@angular/core";
-import { Application } from "pixi.js";
+import { Application, Sprite, Texture } from "pixi.js";
+import { TextureService } from "../../texture/texture.service";
 
 @Component({
   selector: "app-chaton-bot",
@@ -24,14 +25,26 @@ export class ChatonBotComponent implements AfterViewInit {
 
   protected ngZone: NgZone = inject(NgZone);
 
+  textureService = inject(TextureService);
+
   ngAfterViewInit(): void {
     this.ngZone.runOutsideAngular(async (): Promise<void> => {
       await this.application.init({
         background: this.backgroundColor,
-        width: 100,
-        height: 100,
+        width: 500,
+        height: 500,
       });
       this.container.nativeElement.appendChild(this.application.canvas);
+
+      const texture: Texture = this.textureService.getTexture(
+        "chatonIdle",
+      ) as Texture;
+
+      let sprite: Sprite = new Sprite(texture);
+
+      sprite.scale = 0.3;
+
+      this.application.stage.addChild(sprite);
     });
   }
 }
