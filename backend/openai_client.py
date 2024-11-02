@@ -121,7 +121,7 @@ def parse_user_data(response):
         return None
 
 
-def generate_json_for_frontend(user_data, known_user_info):
+def generate_json_for_frontend(user_data, known_user_info, user):
     known_user_info = user.get_known_user_json()
     additional_data = {
         'recommendedQuestion': user_data['recommendedQuestion'],
@@ -133,29 +133,44 @@ def generate_json_for_frontend(user_data, known_user_info):
     }
     return json_for_frontend
 
-def send_user_input(user_input, fields = []):
-    modified_prompt = modify_user_prompt(required_information=user.get_empty_fields_with_description(), user_input=user_input)
+user_sessions = {}
+def send_user_input(user_input, fields = [], user_id = 0):
+    if user_id not in user_sessions:
+        # Create a new ChatClient and UserInformation for the user
+        user_sessions[user_id] = (ChatClient(), UserInformation())
+    client, user = user_sessions[user_id]
+
+    modified_prompt = modify_user_prompt(
+        required_information=user.get_empty_fields_with_description(),
+        user_input=user_input
+    )
+    
     response = client.send_prompt(prompt=modified_prompt, prompt_without_instructions=user_input)
     user_data = parse_user_data(response)
     user.fill_from_dict(user_data)
-    json_for_frontend = generate_json_for_frontend(user_data=user_data, known_user_info=user.get_known_user_json())
+    json_for_frontend = generate_json_for_frontend(
+        user_data=user_data,
+        known_user_info=user.get_known_user_json(),
+        user = user
+    )
+    
+    if len(user.get_empty_fields())==0:
+        print(f'WE ARE DONE, GOT ALL USERDATA')
+    
     return json_for_frontend
-
-client = ChatClient()
-user = UserInformation()
 
 
 if __name__ == "__main__":
-    pass
-    # client = ChatClient()
-    # user = UserInformation()
+    # pass
+    client = ChatClient()
+    user = UserInformation()
 
-    # print('CHATON: Hello Human, im CHATON and here to assist you with an insurance. Tell me about yourself!')
+    print('CHATON: Hello Human, im CHATON and here to assist you with an insurance. Tell me about yourself!')
     
-    # for i in range(10):
-    #     user_input = input("User: ")
-    #     json_for_frontend  = send_user_input(user_input)
-    #     print(f'INFO: Json Data for frontend: {json_for_frontend}')   
-    #     print('CHATON: {}'.format(json_for_frontend['additionalData']['recommendedQuestion']))
+    for i in range(10):
+        user_input = input("User: ")
+        json_for_frontend  = send_user_input(user_input, user_id=2)
+        print(f'INFO: Json Data for frontend: {json_for_frontend}')   
+        print('CHATON: {}'.format(json_for_frontend['additionalData']['recommendedQuestion']))
 
             
