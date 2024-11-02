@@ -1,4 +1,5 @@
 export interface PromtMessage {
   message: string;
-  author: 'user'|'chaton';
+  author: "user" | "chaton";
+  id: string;
 }
