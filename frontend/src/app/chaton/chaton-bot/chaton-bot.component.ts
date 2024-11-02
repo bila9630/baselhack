@@ -4,10 +4,19 @@ import {
   ElementRef,
   inject,
   NgZone,
+  OnInit,
   ViewChild,
 } from "@angular/core";
-import { AnimatedSprite, Application, Sprite, Texture } from "pixi.js";
+import {
+  AnimatedSprite,
+  Application,
+  Assets,
+  Container,
+  Sprite,
+  Texture,
+} from "pixi.js";
 import { TextureService } from "../../texture/texture.service";
+import { ChatonStateService } from "../chaton-state/chaton-state.service";
 
 @Component({
   selector: "app-chaton-bot",
@@ -16,13 +25,10 @@ import { TextureService } from "../../texture/texture.service";
   templateUrl: "./chaton-bot.component.html",
   styleUrl: "./chaton-bot.component.scss",
 })
-export class ChatonBotComponent implements AfterViewInit {
+export class ChatonBotComponent implements OnInit, AfterViewInit {
   @ViewChild("container") protected container!: ElementRef;
 
-  application = new Application({
-    antialias: true,
-    bezierSmoothness: 1,
-  });
+  application = new Application();
 
   protected backgroundColor: string = "#2bea31";
 
@@ -30,22 +36,56 @@ export class ChatonBotComponent implements AfterViewInit {
 
   textureService = inject(TextureService);
 
+  chatonStateService = inject(ChatonStateService);
+
+  chaton: Container | null = null;
+
+  ngOnInit() {
+    this.chatonStateService.changeState.subscribe((state) => {
+      if (state === "talk") {
+        this.switchChatonToTalkingState();
+      } else {
+        this.switchChatonToIdleState();
+      }
+    });
+  }
+
   ngAfterViewInit(): void {
     this.ngZone.runOutsideAngular(async (): Promise<void> => {
       await this.application.init({
-        background: this.backgroundColor,
+        backgroundAlpha: 0,
         width: 150,
         height: 150,
+        antialias: true,
       });
       this.container.nativeElement.appendChild(this.application.canvas);
-
-      const texture: Texture = this.textureService.getTexture(
-        "chatonIdle",
-      ) as Texture;
-
-      let sprite: Sprite = new Sprite(texture);
-
-      this.application.stage.addChild(sprite);
+      this.switchChatonToIdleState();
     });
+  }
+
+  switchChatonToIdleState() {
+    (this.chaton as AnimatedSprite)?.stop();
+    this.application.stage.removeChild(this.chaton as Container);
+    const texture: Texture = this.textureService.getTexture(
+      "chatonIdle",
+    ) as Texture;
+
+    let sprite: Sprite = new Sprite(texture);
+    sprite.label = "chaton";
+
+    this.application.stage.addChild(sprite);
+    this.chaton = this.application.stage.getChildByName("chaton");
+  }
+
+  switchChatonToTalkingState() {
+    this.application.stage.removeChild(this.chaton as Container);
+    const animatedSprite: AnimatedSprite = new AnimatedSprite(
+      this.textureService.chatonAnimation,
+    );
+    animatedSprite.label = "chaton";
+    animatedSprite.animationSpeed = 0.75;
+    this.application.stage.addChild(animatedSprite);
+    this.chaton = this.application.stage.getChildByName("chaton");
+    (this.chaton as AnimatedSprite).play();
   }
 }

@@ -7,14 +7,16 @@ import { Assets, Texture, TexturePool } from "pixi.js";
 export class TextureService {
   private textures: Map<string, Texture> = new Map<string, Texture>([]);
 
+  chatonAnimation: Texture[] = [];
+
   private chatonAssets: { [key: string]: string } = {
     chatonIdle: "chaton_bot/chaton_closed_mouth_smol.svg",
   };
 
   async loadAssets(): Promise<void> {
-    // TexturePool.textureOptions.scaleMode = "nearest";
-    // TexturePool.textureOptions.minFilter = "nearest";
-    // TexturePool.textureOptions.magFilter = "nearest";
+    TexturePool.textureOptions.scaleMode = "nearest";
+    TexturePool.textureOptions.minFilter = "nearest";
+    TexturePool.textureOptions.magFilter = "nearest";
     const assets: { [key: string]: string } = {
       ...this.chatonAssets,
     };
@@ -25,14 +27,15 @@ export class TextureService {
     }
 
     Assets.addBundle("chatonTalking", {
-      chatonTalking1: "chaton_bot/chaton_talking_0.png",
-      chatonTalking2: "chaton_bot/chaton_talking_1.png",
-      chatonTalking3: "chaton_bot/chaton_talking_2.png",
-      chatonTalking4: "chaton_bot/chaton_talking_3.png",
+      chatonTalking1: "chaton_bot/chaton_talking_0_smol.svg",
+      chatonTalking2: "chaton_bot/chaton_talking_1_smol.svg",
+      chatonTalking3: "chaton_bot/chaton_talking_2_smol.svg",
+      chatonTalking4: "chaton_bot/chaton_talking_3_smol.svg",
     });
 
     const chatonTalkingBundle = await Assets.loadBundle("chatonTalking");
-    console.log(chatonTalkingBundle);
+
+    this.chatonAnimation = Object.values<Texture>(chatonTalkingBundle);
   }
 
   getTexture(name: string): Texture {

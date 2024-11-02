@@ -13,7 +13,9 @@ import { ChatonBotComponent } from "../chaton/chaton-bot/chaton-bot.component";
 })
 export class ChatHistoryComponent {
   promptService = inject(PromptService);
+
   lastChatonMessageId = "";
+
   chatMessages$ = this.promptService.prompts$.pipe(
     tap((value) => {
       const newArray = [...value];

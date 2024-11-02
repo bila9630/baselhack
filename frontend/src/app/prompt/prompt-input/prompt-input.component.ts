@@ -8,10 +8,18 @@ import {
 import { FormsModule } from "@angular/forms";
 import { PromptService } from "../service/prompt.service";
 import { VoiceRecognitionService } from "../../voice-recognition/service/voice-recognition.service";
-import { debounceTime, distinctUntilChanged, exhaustMap, of, tap } from "rxjs";
+import {
+  debounceTime,
+  distinctUntilChanged,
+  exhaustMap,
+  of,
+  take,
+  tap,
+} from "rxjs";
 import { MatIcon, MatIconModule } from "@angular/material/icon";
 import { MatButtonModule, MatIconButton } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
+import { ChatGptService } from "../../chat-gpt/chat-gpt.service";
 
 @Component({
   selector: "app-prompt-input",
@@ -36,6 +44,8 @@ export class PromptInputComponent implements OnInit {
   userInput: string = "";
 
   promptService = inject(PromptService);
+
+  chatGptService = inject(ChatGptService);
 
   voiceRecognitionService = inject(VoiceRecognitionService);
 
@@ -68,6 +78,19 @@ export class PromptInputComponent implements OnInit {
 
   addPrompt() {
     this.promptService.addNewPromptToChat(this.userInput, "user");
+
+    this.chatGptService
+      .askQuestion(this.userInput, this.chatGptService.temporalId)
+      .pipe(take(1))
+      .subscribe((response) => {
+        console.log(response);
+
+        this.promptService.addNewPromptToChat(
+          response.additionalData.recommendedQuestion,
+          "chaton",
+        );
+      });
+
     this.userInput = "";
   }
 

@@ -1,0 +1,20 @@
+<div class="game-container">
+  <div class="score">Score: {{ score }}</div>
+  <div class="grid">
+    <div 
+      *ngFor="let row of [].constructor(gridSize); let y = index" 
+      class="row"
+    >
+      <div 
+        *ngFor="let col of [].constructor(gridSize); let x = index" 
+        class="cell"
+        [class.player]="player.x === x && player.y === y"
+        [class.obstacle]="isObstaclePresent(x, y)"
+      ></div>
+    </div>
+  </div>
+  <div *ngIf="gameOver" class="game-over">
+    <div>Game Over! Final Score: {{ score }}</div>
+    <button (click)="restartGame()" class="restart-button">Play Again</button>
+  </div>
+</div> 
