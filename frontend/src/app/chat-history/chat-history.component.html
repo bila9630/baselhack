@@ -1,6 +1,12 @@
-<p>chat-history works!</p>
-
-@for (msg of chatMessages$ | async; track msg.message) {
-    <!-- if statement chatbubble position-->
-    <p>{{ msg.message }}</p>
-}
+<div class="chat-container">
+    <div class="chat-messages">
+        @for (msg of chatMessages$ | async; track msg.message) {
+            <!-- Conditional rendering for chat bubbles -->
+            @if (this.msg.author  == "chaton") {
+                <p class="bubble chaton text-end">{{ msg.message }}</p>
+            } @else {
+            <p class="bubble client text-start">{{ msg.message }}</p>
+                    }
+        }
+    </div>
+</div>
