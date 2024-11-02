@@ -4,6 +4,7 @@ from openai import OpenAI
 from dotenv import load_dotenv
 import json
 import warnings
+from bubble_generation import get_bubbles
 
 load_dotenv()
 OpenAiClient = OpenAI(
@@ -131,13 +132,15 @@ def parse_user_data(response):
         return None
 
 
-def generate_json_for_frontend(user_data, known_user_info, user, is_done = False):
+def generate_json_for_frontend(user_data, user, is_done = False):
     known_user_info = user.get_known_user_json()
-    
+    recommendedQuestion = user_data.get('recommendedQuestion')
+    if is_done:
+        recommendedQuestion = 'We are done here! Thanks for chatting with me'
     additional_data = {
-    'recommendedQuestion': user_data.get('recommendedQuestion'),
+    'recommendedQuestion': recommendedQuestion,
     'target_information': user_data.get('target_information'),
-    'recommendation_bubbles': [None],
+    'recommendation_bubbles': get_bubbles(user_data.get('target_information')),
     'is_done' : is_done
     }
     
@@ -166,11 +169,11 @@ def send_user_input(user_input, fields = [], user_id = 0):
     if len(user.get_empty_fields())==0:
         print(f'There are no more empty fields, finished! si_dopne set to true')
         is_done = True
+        
     
     
     json_for_frontend = generate_json_for_frontend(
         user_data=user_data,
-        known_user_info=user.get_known_user_json(),
         user = user,
         is_done = is_done
     )
