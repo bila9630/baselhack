@@ -64,14 +64,21 @@ export class PromptInputComponent implements OnInit {
         debounceTime(500),
         distinctUntilChanged(),
         tap((speech: string) => {
-          console.log("brr", speech);
-          this.question =
-            speech.charAt(0).toUpperCase() + speech.slice(1) + "?";
+          this.question = speech.charAt(0).toUpperCase() + speech.slice(1);
+          this.promptService.addNewPromptToChat(this.question, "user");
         }),
-        exhaustMap(() => of(this.question)),
+        exhaustMap(() =>
+          this.chatGptService.askQuestion(
+            this.question,
+            this.chatGptService.temporalId,
+          ),
+        ),
       )
-      .subscribe((response: string) => {
-        this.promptService.addNewPromptToChat(response, "user");
+      .subscribe((response) => {
+        this.promptService.addNewPromptToChat(
+          response.additionalData.recommendedQuestion,
+          "chaton",
+        );
         this.recordingStarted = !this.recordingStarted;
       });
   }

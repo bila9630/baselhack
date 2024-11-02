@@ -1,4 +1,25 @@
-<main>
-    <app-prompt-input/>
-    <app-chat-history/>
-</main>
+<mat-drawer-container class="example-container" autosize>
+  <mat-drawer #drawer class="example-sidenav" mode="side">
+    <div class="container text-end mt-2">
+      <button (click)="drawer.close()" mat-icon-button>
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    <p class="p-3">{{ explanation }}</p>
+  </mat-drawer>
+
+  <mat-drawer-content>
+    <main>
+      <div class="container">
+        <div class="row">
+          <div class="col-6">
+            <app-chat-history
+              (explainQuestion)="explanation = $event; drawer.toggle()"
+            />
+          </div>
+        </div>
+      </div>
+      <app-prompt-input />
+    </main>
+  </mat-drawer-content>
+</mat-drawer-container>
