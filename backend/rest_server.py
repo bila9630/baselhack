@@ -67,6 +67,9 @@ class ExtractData(Resource):
             schema:
               type: object
               properties:
+                user_id: 
+                  type: integer
+                  example: "7"
                 fields:
                   type: array
                   items:
@@ -99,10 +102,12 @@ class ExtractData(Resource):
         source = request_for_extraction.get('source', '')
 
         print("Received RequestForExtraction:", request_for_extraction)
-  
-        json_for_frontend  = send_user_input(user_input=source, fields=fields, user_id=user_id)
+        try:
+            json_for_frontend  = send_user_input(user_input=source, fields=fields, user_id=user_id)
+            return jsonify(json_for_frontend)
+        except Exception as err:
+            return jsonify({recommendedQuestion = "Sorry, I didn't understend your answer."})
         
-        return jsonify(json_for_frontend)
 
 
 class NewTemporalId(Resource):
@@ -116,10 +121,10 @@ class NewTemporalId(Resource):
             description: New temporal ID
             schema:
               type: integer
-              example: 1
+              example: 5
         """
         
-        return jsonify(temporal_id=next(get_id))
+        return next(get_id)
 
 
 # Adding resources to the API
