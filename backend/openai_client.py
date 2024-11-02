@@ -4,6 +4,7 @@ from openai import OpenAI
 from dotenv import load_dotenv
 import json
 import warnings
+from bubble_generation import get_bubbles
 
 load_dotenv()
 OpenAiClient = OpenAI(
@@ -133,7 +134,7 @@ def generate_json_for_frontend(user_data, known_user_info, user, is_done = False
     additional_data = {
     'recommendedQuestion': user_data.get('recommendedQuestion'),
     'target_information': user_data.get('target_information'),
-    'recommendation_bubbles': [None],
+    'recommendation_bubbles': get_bubbles(user_data.get('target_information')),
     'is_done' : is_done
     }
     
