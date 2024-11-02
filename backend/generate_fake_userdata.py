@@ -9,13 +9,13 @@ def get_fake_user():
         "gender": fake.random_element(elements=["Male", "Female", "Other"]),
         "date_of_birth": fake.date_of_birth(minimum_age=18, maximum_age=90),
         "smoking_status": fake.boolean(),
-        "insurance_amount": fake.random_int(min=10000, max=100000),
+        "insurance_amount": fake.random_int(min=10, max=100)*1000,
         "insurance_length": fake.random_int(min=1, max=30),  # in years
 
         # Health Information
-        "weight": round(fake.pyfloat(left_digits=2, right_digits=1, positive=True, min_value=50, max_value=120), 1),  # in kg
-        "height": round(fake.pyfloat(left_digits=1, right_digits=2, positive=True, min_value=1.5, max_value=2.1), 2),  # in meters
-
+        "weight": round(fake.pyfloat(left_digits=3, right_digits=1, positive=True, min_value=50, max_value=120), 1),  # in kg
+        "height": fake.random_int(min=150, max=210),  # in cm
+            
         # Contact Information
         "address": fake.address(),
         "profession": fake.job(),
