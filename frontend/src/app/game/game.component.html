@@ -10,7 +10,12 @@
         class="cell"
         [class.player]="player.x === x && player.y === y"
         [class.obstacle]="isObstaclePresent(x, y)"
-      ></div>
+      >
+        <ng-container *ngIf="isObstaclePresent(x, y)">
+          <div class="wheel left"></div>
+          <div class="wheel right"></div>
+        </ng-container>
+      </div>
     </div>
   </div>
   <div *ngIf="gameOver" class="game-over">
