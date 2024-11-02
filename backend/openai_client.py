@@ -38,14 +38,15 @@ user_info_descriptions = {
     "smoking_status": "Boolean indicating if the individual is a smoker.",
     "insurance_amount": "Coverage amount in currency (numerical value).",
     "insurance_length": "Duration of insurance in years (numerical value).",
-    "bmi": "Body Mass Index (numerical value).",
+    "weight": "weight in KG",
+    "height" : "height in cm",
     "address": "Residential address (string).",
     "profession": "Job title or occupation (string)."
 }
 
 class UserInformation:
     def __init__(self, name = None, gender=None, date_of_birth=None, smoking_status=None,
-                 insurance_amount=None, insurance_length=None, bmi=None, 
+                 insurance_amount=None, insurance_length=None, height=None, weight=None,  
                  address=None, profession=None):
         self.name = name
         self.gender = gender
@@ -53,8 +54,9 @@ class UserInformation:
         self.smoking_status = smoking_status
         self.insurance_amount = insurance_amount
         self.insurance_length = insurance_length
-        self.bmi = bmi  # weight and height
-        self.address = address
+        self.height = height 
+        self.weight = weight  
+        self.address = address 
         self.profession = profession
 
     def get_empty_fields(self):
@@ -118,26 +120,42 @@ def parse_user_data(response):
         print(response)
         return None
 
-if __name__ == "__main__":
-    client = ChatClient()
-    user = UserInformation()
 
-    print('CHATON: Hello Human, im CHATON and here to assist you with an insurance. Tell me about yourself!')
+def generate_json_for_frontend(user_data, known_user_info):
+    known_user_info = user.get_known_user_json()
+    additional_data = {
+        'recommendedQuestion': user_data['recommendedQuestion'],
+        'recommendation_bubbles': [None]
+    }
+    json_for_frontend = {
+        'knownUserInfo': known_user_info,
+        'additionalData': additional_data
+    }
+    return json_for_frontend
+
+def send_user_input(user_input, fields = []):
+    modified_prompt = modify_user_prompt(required_information=user.get_empty_fields_with_description(), user_input=user_input)
+    response = client.send_prompt(prompt=modified_prompt, prompt_without_instructions=user_input)
+    user_data = parse_user_data(response)
+    user.fill_from_dict(user_data)
+    json_for_frontend = generate_json_for_frontend(user_data=user_data, known_user_info=user.get_known_user_json())
+    return json_for_frontend
+
+client = ChatClient()
+user = UserInformation()
+
+
+if __name__ == "__main__":
+    pass
+    # client = ChatClient()
+    # user = UserInformation()
+
+    # print('CHATON: Hello Human, im CHATON and here to assist you with an insurance. Tell me about yourself!')
     
-    for i in range(10):
-        user_input = input("User: ")
-        modified_prompt = modify_user_prompt(required_information=user.get_empty_fields_with_description(), user_input=user_input)
-        response = client.send_prompt(prompt=modified_prompt, prompt_without_instructions=user_input)
-        user_data = parse_user_data(response)
-        user.fill_from_dict(user_data)
-        known_user_info = user.get_known_user_json()
-        additional_data = {
-            'recommendedQuestion': user_data['recommendedQuestion'],
-            'recommendation_bubbles': [None]
-        }
-        json_for_frontend = {
-            'knownUserInfo': known_user_info,
-            'additionalData': additional_data
-        }
-        print(f'INFO: Json Data for frontend: {json_for_frontend}')   
-        print('CHATON: {}'.format(json_for_frontend['additionalData']['recommendedQuestion']))
+    # for i in range(10):
+    #     user_input = input("User: ")
+    #     json_for_frontend  = send_user_input(user_input)
+    #     print(f'INFO: Json Data for frontend: {json_for_frontend}')   
+    #     print('CHATON: {}'.format(json_for_frontend['additionalData']['recommendedQuestion']))
+
+            
