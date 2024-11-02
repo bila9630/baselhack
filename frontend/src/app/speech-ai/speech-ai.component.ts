@@ -1,21 +1,22 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { RealtimeClient } from '@openai/realtime-api-beta';
-import { CommonModule } from '@angular/common';
-import { environment } from '../../environments/environment.development';
+import { Component, OnInit, OnDestroy } from "@angular/core";
+import { MatButtonModule } from "@angular/material/button";
+import { RealtimeClient } from "@openai/realtime-api-beta";
+import { CommonModule } from "@angular/common";
+import { environment } from "../../environments/environment.development";
+import { MatIcon } from "@angular/material/icon";
 
 @Component({
-  selector: 'app-speech-ai',
-  templateUrl: './speech-ai.component.html',
-  styleUrls: ['./speech-ai.component.scss'],
+  selector: "app-speech-ai",
+  templateUrl: "./speech-ai.component.html",
+  styleUrls: ["./speech-ai.component.scss"],
   standalone: true,
-  imports: [MatButtonModule, CommonModule]
+  imports: [MatButtonModule, CommonModule, MatIcon],
 })
 export class SpeechAiComponent implements OnInit, OnDestroy {
   public recognition: any;
   private client!: RealtimeClient;
   isListening = false;
-  public aiResponseText: string = '';
+  public aiResponseText: string = "";
   private currentAudioContext?: AudioContext;
   private currentSource?: AudioBufferSourceNode;
   private currentItemId?: string;
@@ -25,18 +26,20 @@ export class SpeechAiComponent implements OnInit, OnDestroy {
 
   constructor() {
     // Initialize speech recognition
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    const SpeechRecognition =
+      (window as any).SpeechRecognition ||
+      (window as any).webkitSpeechRecognition;
     if (SpeechRecognition) {
       this.recognition = new SpeechRecognition();
       this.recognition.continuous = true;
       this.recognition.interimResults = true;
 
       this.recognition.onstart = () => {
-        console.log('Speech recognition started');
+        console.log("Speech recognition started");
       };
 
       this.recognition.onend = () => {
-        console.log('Speech recognition ended');
+        console.log("Speech recognition ended");
         // If we're still supposed to be listening but recognition stopped
         if (this.isListening) {
           this.recognition.start();
@@ -44,58 +47,58 @@ export class SpeechAiComponent implements OnInit, OnDestroy {
       };
 
       this.recognition.onresult = (event: any) => {
-        console.log('Got speech result:', event);
+        console.log("Got speech result:", event);
         const transcript = Array.from(event.results)
           .map((result: any) => result[0])
-          .map(result => result.transcript)
-          .join('');
-        
-        console.log('Transcript:', transcript);
-        
+          .map((result) => result.transcript)
+          .join("");
+
+        console.log("Transcript:", transcript);
+
         if (event.results[0].isFinal) {
           this.sendMessage(transcript);
         }
       };
 
       this.recognition.onerror = (event: any) => {
-        console.error('Speech recognition error:', event);
+        console.error("Speech recognition error:", event);
         this.isListening = false;
       };
     } else {
-      console.error('Speech recognition not supported in this browser');
+      console.error("Speech recognition not supported in this browser");
     }
 
     // Initialize OpenAI Realtime client
     try {
       this.client = new RealtimeClient({
         apiKey: environment.openAiKey,
-        dangerouslyAllowAPIKeyInBrowser: true
+        dangerouslyAllowAPIKeyInBrowser: true,
       });
     } catch (error) {
-      console.error('Failed to initialize OpenAI client:', error);
+      console.error("Failed to initialize OpenAI client:", error);
     }
   }
 
   async ngOnInit() {
     // Set up OpenAI client configuration
     this.client.updateSession({
-      instructions: 'You are a helpful and friendly AI assistant.',
-      voice: 'alloy',
-      turn_detection: { type: 'server_vad' },
-      input_audio_transcription: { model: 'whisper-1' }
+      instructions: "You are a helpful and friendly AI assistant.",
+      voice: "alloy",
+      turn_detection: { type: "server_vad" },
+      input_audio_transcription: { model: "whisper-1" },
     });
 
     // Handle conversation updates
-    this.client.on('conversation.updated', (event: any) => {
+    this.client.on("conversation.updated", (event: any) => {
       const { item } = event;
-      console.log('Response:', item);
-      
+      console.log("Response:", item);
+
       // Skip if we've already processed this item
       if (this.lastProcessedItemId === item.id) {
         return;
       }
-      
-      if (item.status === 'completed' && item.formatted?.audio) {
+
+      if (item.status === "completed" && item.formatted?.audio) {
         try {
           // Stop any currently playing audio
           this.stopCurrentAudio();
@@ -111,24 +114,25 @@ export class SpeechAiComponent implements OnInit, OnDestroy {
             const audioBuffer = this.currentAudioContext.createBuffer(
               1, // number of channels
               item.formatted.audio.length,
-              24000 // sample rate
+              24000, // sample rate
             );
             const channelData = audioBuffer.getChannelData(0);
-            
+
             // Convert Int16Array to Float32Array for audio playback
             for (let i = 0; i < item.formatted.audio.length; i++) {
               channelData[i] = item.formatted.audio[i] / 32768.0;
             }
-            
+
             this.currentSource = this.currentAudioContext.createBufferSource();
             this.currentSource.buffer = audioBuffer;
             this.currentSource.connect(this.currentAudioContext.destination);
-            
+
             // Track sample count during playback
             const startTime = this.currentAudioContext.currentTime;
             this.sampleInterval = setInterval(() => {
               if (this.currentAudioContext) {
-                const elapsedTime = this.currentAudioContext.currentTime - startTime;
+                const elapsedTime =
+                  this.currentAudioContext.currentTime - startTime;
                 this.currentSampleCount = Math.floor(elapsedTime * 24000); // 24000 is sample rate
               }
             }, 100); // Update every 100ms
@@ -146,7 +150,7 @@ export class SpeechAiComponent implements OnInit, OnDestroy {
             this.aiResponseText = item.formatted.transcript;
           }
         } catch (error) {
-          console.error('Error playing audio:', error);
+          console.error("Error playing audio:", error);
           this.stopCurrentAudio();
         }
       }
@@ -156,7 +160,7 @@ export class SpeechAiComponent implements OnInit, OnDestroy {
     try {
       await this.client.connect();
     } catch (error) {
-      console.error('Failed to connect to OpenAI:', error);
+      console.error("Failed to connect to OpenAI:", error);
     }
   }
 
@@ -167,7 +171,7 @@ export class SpeechAiComponent implements OnInit, OnDestroy {
   }
 
   async toggleListening() {
-    console.log('Toggle listening clicked. Current state:', this.isListening);
+    console.log("Toggle listening clicked. Current state:", this.isListening);
     try {
       if (this.isListening) {
         this.recognition.stop();
@@ -177,7 +181,7 @@ export class SpeechAiComponent implements OnInit, OnDestroy {
         this.isListening = true;
       }
     } catch (error) {
-      console.error('Error toggling speech recognition:', error);
+      console.error("Error toggling speech recognition:", error);
       this.isListening = false;
     }
   }
@@ -185,10 +189,10 @@ export class SpeechAiComponent implements OnInit, OnDestroy {
   private async sendMessage(transcript: string) {
     try {
       await this.client.sendUserMessageContent([
-        { type: 'input_text', text: transcript }
+        { type: "input_text", text: transcript },
       ]);
     } catch (error) {
-      console.error('Error sending message:', error);
+      console.error("Error sending message:", error);
     }
   }
 
@@ -202,7 +206,7 @@ export class SpeechAiComponent implements OnInit, OnDestroy {
       try {
         this.client.cancelResponse(this.currentItemId, this.currentSampleCount);
       } catch (error) {
-        console.error('Error canceling response:', error);
+        console.error("Error canceling response:", error);
       }
     }
 

@@ -1,6 +1,6 @@
 import { inject, Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
+import { Observable, tap } from "rxjs";
 
 @Injectable({
   providedIn: "root",
@@ -9,6 +9,10 @@ export class ChatGptService {
   httpClient = inject(HttpClient);
 
   temporalId: string = "";
+
+  isDone: boolean = false;
+
+  pricePerYear: number = 0;
 
   getTemporalId(): Observable<string> {
     return this.httpClient.get(
@@ -20,9 +24,16 @@ export class ChatGptService {
   }
 
   askQuestion(question: string, temporalId: string): Observable<any> {
-    return this.httpClient.post(
-      "https://baselbackend.vercel.app/application/chat/extract_data",
-      { source: question, user_id: temporalId },
-    );
+    return this.httpClient
+      .post("https://baselbackend.vercel.app/application/chat/extract_data", {
+        source: question,
+        user_id: temporalId,
+      })
+      .pipe(
+        tap((data: any) => {
+          this.pricePerYear = data?.additionalData?.price_per_year;
+          this.isDone = !!data?.additionalData?.is_done;
+        }),
+      );
   }
 }
