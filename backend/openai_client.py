@@ -151,12 +151,15 @@ def AgeCalc(birthDate):
 
 def get_question_explanation(target_information):
     explanation = {
+        "gender": "Gender influences insurance risk due to differences in life expectancy and health risk profiles between males, females, and others.",
+        "address": "The address is required for identifying applicable regional policies, risk factors, and to determine available insurance coverage.",
         "date_of_birth": "Age is a key factor in calculating risk, as it impacts life expectancy and health considerations.",
         "smoking_status": "Smoking status is a major indicator of health risk, as it can lead to conditions that increase insurance risk.",
         "weight": "Weight, along with height, helps assess health risks such as obesity-related conditions.",
-        "height": "Height is used in BMI calculation to determine health risks",
+        "height": "Height is used in BMI calculation to determine health risks.",
         "profession": "Certain professions carry higher risk levels due to potential hazards, affecting insurance rates."
     }
+
     relevant_texts = [explanation[target] for target in target_information if target in explanation]
     return relevant_texts
 
@@ -221,15 +224,16 @@ def send_user_input(user_input, fields = [], user_id = 0):
 
 
 if __name__ == "__main__":
-    client = ChatClient()
-    user = UserInformation()
+    pass
+    # client = ChatClient()
+    # user = UserInformation()
 
-    print('CHATON: Hello Human, im CHATON and here to assist you with an insurance. Tell me about yourself!')
+    # print('CHATON: Hello Human, im CHATON and here to assist you with an insurance. Tell me about yourself!')
     
-    for i in range(10):
-        user_input = input("User: ")
-        json_for_frontend  = send_user_input(user_input, user_id=200)
-        print(f'INFO: Json Data for frontend: {json_for_frontend}')   
-        print('CHATON: {}'.format(json_for_frontend['additionalData']['recommendedQuestion']))
+    # for i in range(10):
+    #     user_input = input("User: ")
+    #     json_for_frontend  = send_user_input(user_input, user_id=200)
+    #     print(f'INFO: Json Data for frontend: {json_for_frontend}')   
+    #     print('CHATON: {}'.format(json_for_frontend['additionalData']['recommendedQuestion']))
 
             

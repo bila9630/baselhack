@@ -2,7 +2,7 @@ from faker import Faker
 
 fake = Faker()
 
-def get_Fake_user():
+def get_fake_user():
     user_data = {
         # User Information
         "name": fake.name(),
@@ -11,14 +11,19 @@ def get_Fake_user():
         "smoking_status": fake.boolean(),
         "insurance_amount": fake.random_int(min=10000, max=100000),
         "insurance_length": fake.random_int(min=1, max=30),  # in years
-        "bmi": round(fake.pyfloat(left_digits=2, right_digits=1, positive=True, min_value=18, max_value=35), 1),
+
+        # Health Information
+        "weight": round(fake.pyfloat(left_digits=2, right_digits=1, positive=True, min_value=50, max_value=120), 1),  # in kg
+        "height": round(fake.pyfloat(left_digits=1, right_digits=2, positive=True, min_value=1.5, max_value=2.1), 2),  # in meters
+
+        # Contact Information
         "address": fake.address(),
         "profession": fake.job(),
 
         # Browser Information
         "user_agent": fake.user_agent(),
         "operating_system": fake.random_element(elements=["Windows", "Mac OS", "Linux", "Android", "iOS"]),
-        "ip_address": fake.ipv4_public(),  # or fake.ipv6() for IPv6
+        "ip_address": fake.ipv4_public(),
         "mac_address": fake.mac_address(),
         "url": fake.url(),
         "domain_name": fake.domain_name(),
@@ -29,8 +34,9 @@ def get_Fake_user():
     }
     return user_data
 
+
 for i in range(1):
-    print(get_Fake_user())
+    print(get_fake_user())
 
 
 
