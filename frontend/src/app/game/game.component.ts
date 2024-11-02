@@ -27,10 +27,14 @@ export class GameComponent implements OnInit {
   score = 0;
   gridSize = 10;
   private gameInterval: any;
+  private initialY = 9;
+  private highestY = 9;
 
   ngOnInit() {
     this.initializeObstacles();
     this.startGame();
+    this.highestY = this.initialY;
+    this.score = 0;
   }
 
   @HostListener('window:keydown', ['$event'])
@@ -41,7 +45,10 @@ export class GameComponent implements OnInit {
       case 'ArrowUp':
         if (this.player.y > 0) {
           this.player.y--;
-          if (this.player.y < this.score) this.score = this.player.y;
+          if (this.player.y < this.highestY) {
+            this.highestY = this.player.y;
+            this.score = this.initialY - this.highestY;
+          }
         }
         break;
       case 'ArrowDown':
@@ -81,9 +88,10 @@ export class GameComponent implements OnInit {
   }
 
   restartGame() {
-    this.player = { x: 5, y: 9 };
+    this.player = { x: 5, y: this.initialY };
     this.obstacles = [];
     this.gameOver = false;
+    this.highestY = this.initialY;
     this.score = 0;
     this.initializeObstacles();
     this.startGame();
