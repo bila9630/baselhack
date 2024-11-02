@@ -7,6 +7,7 @@ import { provideAnimationsAsync } from "@angular/platform-browser/animations/asy
 import { TextureService } from "./texture/texture.service";
 import { routes } from "./app.routes";
 import { provideRouter } from "@angular/router";
+import { provideHttpClient } from "@angular/common/http";
 
 const initializeApp = (textureService: TextureService) => {
   return () =>
@@ -18,6 +19,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideAnimationsAsync(),
+    provideHttpClient(),
     {
       provide: APP_INITIALIZER,
       useFactory: initializeApp,

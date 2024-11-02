@@ -9,18 +9,7 @@ import { ulid } from "ulid";
 export class PromptService {
   private _prompts$ = new BehaviorSubject<PromtMessage[]>([
     {
-      message: "Hello! How can I help you today?",
-      author: "chaton",
-      id: ulid(),
-    },
-    {
-      message: "I would like to know more about your services",
-      author: "user",
-      id: ulid(),
-    },
-    {
-      message:
-        "Sure! We offer a variety of services. What are you interested in?",
+      message: "Hello! Tell me about yourself, so I can help you better.",
       author: "chaton",
       id: ulid(),
     },
