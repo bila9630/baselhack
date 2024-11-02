@@ -100,13 +100,14 @@ class ExtractData(Resource):
         fields = request_for_extraction.get('fields', [])
         user_id = request_for_extraction.get('user_id', None)
         source = request_for_extraction.get('source', '')
-        user_id = request_for_extraction.get('user_id', null)
 
         print("Received RequestForExtraction:", request_for_extraction)
-
-        json_for_frontend  = send_user_input(user_input=source, fields=fields, user_id=user_id)
+        try:
+            json_for_frontend  = send_user_input(user_input=source, fields=fields, user_id=user_id)
+            return jsonify(json_for_frontend)
+        except Exception as err:
+            return jsonify({recommendedQuestion = "Sorry, I didn't understend your answer."})
         
-        return jsonify(json_for_frontend)
 
 
 class NewTemporalId(Resource):
