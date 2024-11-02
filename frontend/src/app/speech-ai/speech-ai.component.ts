@@ -3,13 +3,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { RealtimeClient } from '@openai/realtime-api-beta';
 import { CommonModule } from '@angular/common';
 import { environment } from '../../environments/environment.development';
-
+import { MatIcon } from "@angular/material/icon";
 @Component({
   selector: 'app-speech-ai',
   templateUrl: './speech-ai.component.html',
   styleUrls: ['./speech-ai.component.scss'],
   standalone: true,
-  imports: [MatButtonModule, CommonModule]
+  imports: [MatButtonModule, CommonModule, MatIcon]
 })
 export class SpeechAiComponent implements OnInit, OnDestroy {
   public recognition: any;
