@@ -7,6 +7,7 @@ import { WritingPipe } from "../writing/writing.pipe";
 import { MatIcon } from "@angular/material/icon";
 import { MatIconButton } from "@angular/material/button";
 import { MatSuffix } from "@angular/material/form-field";
+import { BubbleService } from "../bubble/bubble.service";
 
 @Component({
   selector: "app-chat-history",
@@ -24,11 +25,12 @@ import { MatSuffix } from "@angular/material/form-field";
 })
 export class ChatHistoryComponent {
   promptService = inject(PromptService);
-
+  bubbleService = inject(BubbleService);
   lastChatonMessageId = "";
 
   @Output() explainQuestion = new EventEmitter<string>();
 
+  bubbles$ = this.bubbleService.bubble$;
   chatMessages$ = this.promptService.prompts$.pipe(
     tap((value) => {
       const newArray = [...value];
