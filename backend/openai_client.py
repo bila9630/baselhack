@@ -83,9 +83,10 @@ class UserInformation:
         return {field: value for field, value in self.__dict__.items() if value is not None}
                 
 class ChatClient:
-    def __init__(self, model="gpt-3.5-turbo", initial_instructions = ''):
+    def __init__(self, model="gpt-3.5-turbo", initial_instructions = '', remember_history = True):
         self.messages = [ {"role": "system", "content": initial_instructions} ]
         self.model = model
+        self.remember_history = remember_history
     
     # `prompt` is the actual prompt that will be sent to the LLM.
     # `prompt_without_instructions` is the version saved in the message history for future requests (usually without initial instructions).

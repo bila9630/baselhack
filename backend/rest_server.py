@@ -99,7 +99,7 @@ class ExtractData(Resource):
         source = request_for_extraction.get('source', '')
 
         print("Received RequestForExtraction:", request_for_extraction)
-
+  
         json_for_frontend  = send_user_input(user_input=source, fields=fields, user_id=user_id)
         
         return jsonify(json_for_frontend)
