@@ -4,3 +4,8 @@ gonna make something like prediction_clustering.py, use userdata and metadata to
 """
 
 
+from openai_client import *
+
+
+
+
