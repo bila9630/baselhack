@@ -1,0 +1,14 @@
+<div class="container">
+  <button mat-fab 
+          [color]="isListening ? 'warn' : 'primary'" 
+          class="round-button" 
+          (click)="toggleListening()"
+          [disabled]="!isRecognitionAvailable()">
+    <span class="button-text">{{ isListening ? 'Listening...' : 'Talk with Chaton' }}</span>
+  </button>
+
+  <!-- Comment out text display -->
+  <div *ngIf="aiResponseText">
+    <p>AI Response: {{ aiResponseText }}</p>
+  </div>
+</div>
