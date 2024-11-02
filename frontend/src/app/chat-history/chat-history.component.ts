@@ -16,8 +16,9 @@ export class ChatHistoryComponent {
   lastChatonMessageId = "";
   chatMessages$ = this.promptService.prompts$.pipe(
     tap((value) => {
+      const newArray = [...value];
       this.lastChatonMessageId =
-        value.reverse().find((m) => (m.author = "chaton"))?.id || "";
+        newArray.reverse().find((m) => m.author === "chaton")?.id || "";
     }),
   );
 }
