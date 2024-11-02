@@ -38,14 +38,15 @@ user_info_descriptions = {
     "smoking_status": "Boolean indicating if the individual is a smoker.",
     "insurance_amount": "Coverage amount in currency (numerical value).",
     "insurance_length": "Duration of insurance in years (numerical value).",
-    "bmi": "Body Mass Index (numerical value).",
+    "weight": "weight in KG",
+    "height" : "height in cm",
     "address": "Residential address (string).",
     "profession": "Job title or occupation (string)."
 }
 
 class UserInformation:
     def __init__(self, name = None, gender=None, date_of_birth=None, smoking_status=None,
-                 insurance_amount=None, insurance_length=None, bmi=None, 
+                 insurance_amount=None, insurance_length=None, height=None, weight=None,  
                  address=None, profession=None):
         self.name = name
         self.gender = gender
@@ -53,8 +54,9 @@ class UserInformation:
         self.smoking_status = smoking_status
         self.insurance_amount = insurance_amount
         self.insurance_length = insurance_length
-        self.bmi = bmi  # weight and height
-        self.address = address
+        self.height = height 
+        self.weight = weight  
+        self.address = address 
         self.profession = profession
 
     def get_empty_fields(self):
@@ -118,7 +120,48 @@ def parse_user_data(response):
         print(response)
         return None
 
+
+def generate_json_for_frontend(user_data, known_user_info, user):
+    known_user_info = user.get_known_user_json()
+    additional_data = {
+        'recommendedQuestion': user_data['recommendedQuestion'],
+        'recommendation_bubbles': [None]
+    }
+    json_for_frontend = {
+        'knownUserInfo': known_user_info,
+        'additionalData': additional_data
+    }
+    return json_for_frontend
+
+user_sessions = {}
+def send_user_input(user_input, fields = [], user_id = 0):
+    if user_id not in user_sessions:
+        # Create a new ChatClient and UserInformation for the user
+        user_sessions[user_id] = (ChatClient(), UserInformation())
+    client, user = user_sessions[user_id]
+
+    modified_prompt = modify_user_prompt(
+        required_information=user.get_empty_fields_with_description(),
+        user_input=user_input
+    )
+    
+    response = client.send_prompt(prompt=modified_prompt, prompt_without_instructions=user_input)
+    user_data = parse_user_data(response)
+    user.fill_from_dict(user_data)
+    json_for_frontend = generate_json_for_frontend(
+        user_data=user_data,
+        known_user_info=user.get_known_user_json(),
+        user = user
+    )
+    
+    if len(user.get_empty_fields())==0:
+        print(f'WE ARE DONE, GOT ALL USERDATA')
+    
+    return json_for_frontend
+
+
 if __name__ == "__main__":
+    # pass
     client = ChatClient()
     user = UserInformation()
 
@@ -126,18 +169,8 @@ if __name__ == "__main__":
     
     for i in range(10):
         user_input = input("User: ")
-        modified_prompt = modify_user_prompt(required_information=user.get_empty_fields_with_description(), user_input=user_input)
-        response = client.send_prompt(prompt=modified_prompt, prompt_without_instructions=user_input)
-        user_data = parse_user_data(response)
-        user.fill_from_dict(user_data)
-        known_user_info = user.get_known_user_json()
-        additional_data = {
-            'recommendedQuestion': user_data['recommendedQuestion'],
-            'recommendation_bubbles': [None]
-        }
-        json_for_frontend = {
-            'knownUserInfo': known_user_info,
-            'additionalData': additional_data
-        }
+        json_for_frontend  = send_user_input(user_input, user_id=2)
         print(f'INFO: Json Data for frontend: {json_for_frontend}')   
         print('CHATON: {}'.format(json_for_frontend['additionalData']['recommendedQuestion']))
+
+            

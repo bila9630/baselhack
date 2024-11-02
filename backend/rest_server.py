@@ -1,17 +1,18 @@
 from flask import Flask, request, jsonify
 from flask_restful import Resource, Api
 from flasgger import Swagger
+from openai_client import send_user_input
+
 
 app = Flask(__name__)
 api = Api(app)
 swagger = Swagger(app)
 
-# Structure for storing extracted data
-class ExtractedData:
-    def __init__(self, field1, field2, recommended_question):
-        self.field1 = field1
-        self.field2 = field2
-        self.recommended_question = recommended_question
+def get_id_gen():
+    for i in range(0, 99999):
+        yield i
+
+get_id = get_id_gen()
 
 # Temporary storage for extracted data
 extracted_data_storage = []
@@ -98,20 +99,30 @@ class ExtractData(Resource):
 
         print("Received RequestForExtraction:", request_for_extraction)
 
-        # Example of creating extracted data
-        extracted_data = ExtractedData(field1="value1", field2="value2", recommended_question="What do you think about this?")
-        extracted_data_storage.append(extracted_data)
-
-        # Forming the response in JSON format
-        response_data = {
-            "field1": extracted_data.field1,
-            "field2": extracted_data.field2,
-            "recommendedQuestion": extracted_data.recommended_question
-        }
+        json_for_frontend  = send_user_input(user_input=source, fields=fields, id)
         
-        return jsonify(response_data)
+        return jsonify(json_for_frontend)
+
+
+class NewTemporalId(Resource):
+    
+    def get(self):
+        """
+        Generate a new temporal ID
+        ---
+        responses:
+          200:
+            description: New temporal ID
+            schema:
+              type: integer
+              example: 1
+        """
+        
+        return jsonify(temporal_id=next(get_id))
+
 
 # Adding resources to the API
+api.add_resource(NewTemporalId,'/application/new_temporal_id')
 api.add_resource(Application, '/application/')
 api.add_resource(ExtractData, '/application/chat/extract_data')
 

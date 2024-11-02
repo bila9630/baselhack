@@ -6,7 +6,7 @@ import {
   NgZone,
   ViewChild,
 } from "@angular/core";
-import { Application, Sprite, Texture } from "pixi.js";
+import { AnimatedSprite, Application, Sprite, Texture } from "pixi.js";
 import { TextureService } from "../../texture/texture.service";
 
 @Component({
@@ -19,7 +19,10 @@ import { TextureService } from "../../texture/texture.service";
 export class ChatonBotComponent implements AfterViewInit {
   @ViewChild("container") protected container!: ElementRef;
 
-  application = new Application();
+  application = new Application({
+    antialias: true,
+    bezierSmoothness: 1,
+  });
 
   protected backgroundColor: string = "#2bea31";
 
@@ -31,8 +34,8 @@ export class ChatonBotComponent implements AfterViewInit {
     this.ngZone.runOutsideAngular(async (): Promise<void> => {
       await this.application.init({
         background: this.backgroundColor,
-        width: 500,
-        height: 500,
+        width: 150,
+        height: 150,
       });
       this.container.nativeElement.appendChild(this.application.canvas);
 
@@ -41,8 +44,6 @@ export class ChatonBotComponent implements AfterViewInit {
       ) as Texture;
 
       let sprite: Sprite = new Sprite(texture);
-
-      sprite.scale = 0.3;
 
       this.application.stage.addChild(sprite);
     });
