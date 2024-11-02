@@ -1,10 +1,12 @@
 from flask import Flask, request, jsonify
 from flask_restful import Resource, Api
 from flasgger import Swagger
+from flask_cors import CORS
 from openai_client import send_user_input
 
 
 app = Flask(__name__)
+CORS(app)
 api = Api(app)
 swagger = Swagger(app)
 
