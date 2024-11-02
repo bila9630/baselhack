@@ -20,6 +20,7 @@ import { MatButtonModule, MatIconButton } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { ChatGptService } from "../../chat-gpt/chat-gpt.service";
 import { BubbleService } from "../../bubble/bubble.service";
+import { UserDataService } from "../../user-data/user-data.service";
 
 @Component({
   selector: "app-prompt-input",
@@ -49,6 +50,8 @@ export class PromptInputComponent implements OnInit {
 
   chatGptService = inject(ChatGptService);
 
+  userDataService = inject(UserDataService);
+
   voiceRecognitionService = inject(VoiceRecognitionService);
 
   speechApiExists: boolean = false;
@@ -68,7 +71,7 @@ export class PromptInputComponent implements OnInit {
         distinctUntilChanged(),
         tap((speech: string) => {
           this.question = speech.charAt(0).toUpperCase() + speech.slice(1);
-          this.promptService.addNewPromptToChat(this.question, "user");
+          this.promptService.addNewPromptToChat(this.question, "user", []);
         }),
         exhaustMap(() =>
           this.chatGptService.askQuestion(
@@ -79,15 +82,20 @@ export class PromptInputComponent implements OnInit {
       )
       .subscribe((response) => {
         this.promptService.addNewPromptToChat(
-          response.additionalData.recommendedQuestion,
+          response.additionalData.recommendedQuestion ||
+            response.recommendedQuestion,
           "chaton",
+          response.additionalData.question_explanation,
         );
+
+        this.addKnownData(response.knownUserInfo);
+
         this.recordingStarted = !this.recordingStarted;
       });
   }
 
   addPrompt() {
-    this.promptService.addNewPromptToChat(this.userInput, "user");
+    this.promptService.addNewPromptToChat(this.userInput, "user", []);
 
     this.chatGptService
       .askQuestion(this.userInput, this.chatGptService.temporalId)
@@ -95,9 +103,12 @@ export class PromptInputComponent implements OnInit {
       .subscribe((response) => {
         console.log(response);
 
+        this.addKnownData(response.knownUserInfo);
         const newChatonPromptId = this.promptService.addNewPromptToChat(
-          response.additionalData.recommendedQuestion,
+          response.additionalData.recommendedQuestion ||
+            response.recommendedQuestion,
           "chaton",
+          response.additionalData.question_explanation,
         );
 
         const mockedResponse = ["test question 1", "test question 2"];
@@ -109,6 +120,15 @@ export class PromptInputComponent implements OnInit {
       });
 
     this.userInput = "";
+  }
+
+  addKnownData(data: object) {
+    const mappedData = Object.entries(data).map(([key, value]) => ({
+      key,
+      value,
+    }));
+
+    this.userDataService.setUserData(mappedData);
   }
 
   toggleRecording(): void {
