@@ -1,14 +1,23 @@
 <div class="container">
-  <button mat-fab 
-          [color]="isListening ? 'warn' : 'primary'" 
-          class="round-button" 
-          (click)="toggleListening()"
-          [disabled]="!isRecognitionAvailable()">
-    <span class="button-text">{{ isListening ? 'Listening...' : 'Talk with Chaton' }}</span>
-  </button>
+  <div class="welcome-text">
+    <h1>Your Safe Space</h1>
+    <p>Feel free to share anything that's on your mind. I'm here to listen.</p>
+  </div>
 
-  <!-- Comment out text display -->
-  <div *ngIf="aiResponseText">
-    <p>AI Response: {{ aiResponseText }}</p>
+  <div class="chat-circle">
+    <button mat-fab 
+            [color]="isListening ? 'warn' : 'primary'" 
+            class="talk-button" 
+            (click)="toggleListening()"
+            [disabled]="!isRecognitionAvailable()">
+      <div class="button-content">
+        <mat-icon>{{ isListening ? 'mic' : 'mic_none' }}</mat-icon>
+        <span class="button-text">{{ isListening ? 'I\'m listening...' : 'Talk to me' }}</span>
+      </div>
+    </button>
+  </div>
+
+  <div class="response-area" *ngIf="aiResponseText">
+    <p>{{ aiResponseText }}</p>
   </div>
 </div>

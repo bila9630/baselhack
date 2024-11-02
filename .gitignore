@@ -4,3 +4,4 @@ frontend/.angular
 frontend/dist
 */__pycache__/*
 backend/generated_userdata/*
+frontend/src/environments/*
