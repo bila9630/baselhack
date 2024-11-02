@@ -167,7 +167,7 @@ class ExtractData(Resource):
             return jsonify(json_for_frontend)
         except Exception as err:
             print(f'There was an error {err}')
-            return jsonify({"recommendedQuestion":"Sorry, I didn't understend your answer."})
+            return jsonify({"recommendedQuestion":"Sorry, I didn't understend your answer.", "error":err})
           
 
 
