@@ -1,5 +1,5 @@
 <div class="chat-container">
-  <div class="chat-messages">
+  <div class="chat-messages" #scrollMe [scrollTop]="scrollMe.offsetHeight">
     @for (msg of chatMessages$ | async; track msg.message) {
       <!-- Conditional rendering for chat bubbles -->
       @if (this.msg.author == "chaton") {
