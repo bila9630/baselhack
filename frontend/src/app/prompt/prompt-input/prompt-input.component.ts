@@ -94,12 +94,6 @@ export class PromptInputComponent implements OnInit {
       });
   }
 
-  addRecommendationBubbles(bubbles: string[]) {
-    for (let bubble of bubbles) {
-      this.bubbleService.addNewBubble(this.question, bubble);
-    }
-  }
-
   addPrompt() {
     this.promptService.addNewPromptToChat(this.userInput, "user", []);
 
@@ -117,9 +111,8 @@ export class PromptInputComponent implements OnInit {
           response.additionalData.question_explanation,
         );
 
-        const mockedResponse = ["test question 1", "test question 2"];
-        for (let q of mockedResponse) {
-          this.bubbleService.addNewBubble(this.question, newChatonPromptId);
+        for (let q of response.additionalData.recommendation_bubbles) {
+          this.bubbleService.addNewBubble(q, newChatonPromptId);
           console.log(q);
           console.log(this.bubbleService._bubble$.value);
         }

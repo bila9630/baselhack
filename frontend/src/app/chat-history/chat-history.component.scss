@@ -33,7 +33,6 @@
   align-self: flex-start;
 }
 
-
 .small-icon-button {
   width: 24px !important;
   height: 24px !important;
@@ -42,7 +41,7 @@
   align-items: center;
   justify-content: center;
 
-  & > *[role=img] {
+  & > *[role="img"] {
     width: 16px;
     height: 16px;
     font-size: 16px;
@@ -127,21 +126,22 @@
 }
 
 .suggestion-container {
-    width: 100%;
+  width: 100%;
 }
 
 .suggestion-button {
-    background-color: rgba(103, 58, 183, 0.1);
-    color: #673ab7;
-    font-size: 0.9rem;
-    padding: 4px 12px;
-    border-radius: 16px;
+  background-color: rgba(103, 58, 183, 0.1);
+  color: #673ab7;
+  font-size: 0.9rem;
+  padding: 4px 12px;
+  border-radius: 16px;
+  cursor: pointer;
 }
 
 .suggestion-button:hover {
-    background-color: rgba(103, 58, 183, 0.2);
+  background-color: rgba(103, 58, 183, 0.2);
 }
 
 .message-wrapper {
-    margin-bottom: 2.5rem !important; // 40px
+  margin-bottom: 2.5rem !important; // 40px
 }

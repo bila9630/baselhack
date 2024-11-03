@@ -1,49 +1,54 @@
 <div class="chat-container" id="chat">
-    <div class="chat-messages">
-        @for (msg of chatMessages$ | async; track msg.message) {
-            @if (this.msg.author == "chaton") {
-                <div class="d-inline message-wrapper mb-5">
-                    <div class="d-flex w-100 justify-content-end align-items-start">
-
-                        <div class="d-flex flex-column">
-
-
-            <span
-                    class="d-flex justify-content-center bubble chaton text-start"
-            >
-              <div class="flex-column">
-                <span>
-                  {{
-                        msg.message | writing: msg.id == lastChatonMessageId | async
+  <div class="chat-messages">
+    @for (msg of chatMessages$ | async; track msg.message) {
+      @if (this.msg.author == "chaton") {
+        <div class="d-inline message-wrapper mb-5">
+          <div class="d-flex w-100 justify-content-end align-items-start">
+            <div class="d-flex flex-column">
+              <span
+                class="d-flex justify-content-center bubble chaton text-start"
+              >
+                <div class="flex-column">
+                  <span>
+                    {{
+                      msg.message
+                        | writing: msg.id == lastChatonMessageId
+                        | async
                     }}
                     @if (msg.explanation.length) {
-                        <button
-                                (click)="explainQuestion.emit(msg.explanation)"
-                                class="small-icon-button"
-                                mat-icon-button
-                        >
-                      <mat-icon>info</mat-icon>
-                    </button>
+                      <button
+                        (click)="explainQuestion.emit(msg.explanation)"
+                        class="small-icon-button"
+                        mat-icon-button
+                      >
+                        <mat-icon>info</mat-icon>
+                      </button>
                     }
-                </span>
-              </div>
-            </span>
-                            <div class="suggestion-container d-flex justify-content-end gap-2 mt-2">
-                                <button mat-button class="suggestion-button">Option 1</button>
-                                <button mat-button class="suggestion-button">Option 2</button>
-                                <button mat-button class="suggestion-button">Option 3</button>
-                            </div>
-
-                        </div>
-
-                        @if (msg.id == lastChatonMessageId) {
-                            <app-chaton-bot/>
-                        }
-                    </div>
+                  </span>
                 </div>
-            } @else {
-                <p class="bubble client text-start message-wrapper mb-5">{{ msg.message }}</p>
+              </span>
+              <div
+                class="suggestion-container d-flex justify-content-end gap-2 mt-2"
+              >
+                @for (bubble of bubbles$ | async; track bubble) {
+                  @if (bubble.referencePromptId == msg.id) {
+                    <button (click)="answerFromBubble.emit(bubble.question)" mat-button class="suggestion-button">
+                      {{ bubble.question }}
+                    </button>
+                  }
+                }
+              </div>
+            </div>
+            @if (msg.id == lastChatonMessageId) {
+              <app-chaton-bot />
             }
-        }
-    </div>
+          </div>
+        </div>
+      } @else {
+        <p class="bubble client text-start message-wrapper mb-5">
+          {{ msg.message }}
+        </p>
+      }
+    }
+  </div>
 </div>

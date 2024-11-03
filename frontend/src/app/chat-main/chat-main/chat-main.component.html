@@ -25,6 +25,7 @@
           <div class="col-7">
             <app-chat-history
               (explainQuestion)="explanation = $event; drawer.toggle()"
+              (answerFromBubble)="addPrompt($event)"
             />
           </div>
           <div class="col-5">
