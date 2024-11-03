@@ -17,7 +17,7 @@ export class PromptService {
     },
     {
       message:
-        "So, tell me—do you already have an idea of the kind of insurance you’re looking for? Or would you like me to help you" +
+        "So, tell me—do you already have an idea of what kind of insurance you’re looking for? Or would you like me to help you" +
         " explore your options? I’m here to make sure you feel confident and comfortable with your choice. Just let me know how I can" +
         " help!",
       author: "chaton",
