@@ -6,16 +6,24 @@ from datetime import date, datetime
 
 user_info_descriptions = {
     "name": "John Pork",
-    "gender": "Male",
-    "date_of_birth": "2001-10-09",
+    "gender": "male",
+    "date_of_birth": "2001-01-01",
     "smoking_status": "True",
-    "insurance_amount": "250000",
-    "insurance_length": "5",
-    "weight": "89",
-    "height": "186",
-    "address": "Rue de creugenant 16, 2900 Porrentruy",
-    "profession": "Farmer"
+    "insurance_amount": 250000,
+    "insurance_length": 5,
+    "height": 177,
+    "weight": 78,
+    "address": "Jacksonville, farm",
+    "profession": "Farmer",
+    "additional_risks": {
+            "travel_to_Venezuela": 0.2,
+            "heart_disease": 0.9
+        }
 }
+
+def pdf_creation(user_info_descriptions):
+    pdf = pdf_export(user_info_descriptions)
+    pdf.save_pdf("Lebensversicherung.pdf")
 
 
 class pdf_export:
@@ -31,6 +39,8 @@ class pdf_export:
         self.bmi = self.weight / (self.height ** 2)  # Correct BMI calculation
         self.address = user_info_descriptions["address"]
         self.profession = user_info_descriptions["profession"]
+        self.additional_risks = user_info_descriptions["additional_risks"]
+        print(self.additional_risks)
 
     @staticmethod
     def AgeCalc(birthDate):
@@ -46,10 +56,14 @@ class pdf_export:
             base_age -= 5
         if self.gender.lower() == "male":
             base_age -= 5
-        if 16 > self.bmi or self.bim> 41:
-            base_age -= 3
+        if 16 > self.bmi or self.bmi> 41:
+            base_age -= 5
+        ##New Code - subtrackes additional risks
+        for key in self.additional_risks:
+            base_age -= 3*user_info_descriptions["additional_risks"][key]
         death_risk = (age / (5 * base_age)) ** 2
         price = (int(self.insurance_amount) * death_risk) / int(self.insurance_length)
+        print(price)
         return price
 
     def save_pdf(self, filename="user_info.pdf"):
@@ -97,6 +111,9 @@ class pdf_export:
             f"Calculated BMI: {self.bmi:.2f}",
             f"Estimated Price per Year: ${self.price_per_year():.2f}"
         ]
+        ##Adds additional risks to the pdf
+        for key in self.additional_risks:
+            user_info_lines.append(f'{key}: {self.additional_risks[key]}')
 
         for line in user_info_lines:
             c.drawString(72, y_position, line)
@@ -115,8 +132,3 @@ class pdf_export:
         with open(filename, 'wb') as f:
             f.write(buffer.read())
         buffer.close()
-
-
-# Create the pdf_export object and save the PDF
-pdf = pdf_export(user_info_descriptions)
-pdf.save_pdf("Lebensversicherung.pdf")
