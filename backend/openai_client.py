@@ -104,7 +104,7 @@ class ChatClient:
             prompt_without_instructions = prompt
 
         messages_with_instruction_prompt = self.messages + [{"role": "user", "content": prompt}]
-        if not self.remember_history:
+        if self.remember_history:
             self.messages.append({"role": "user", "content": prompt_without_instructions})
         
         try:
@@ -115,7 +115,7 @@ class ChatClient:
                 max_tokens=max_tokens
             )
             response_message = result.choices[0].message.content.replace('`', '').replace('json', '').strip()
-            if not self.remember_history:
+            if self.remember_history:
                 self.messages.append({"role": "assistant", "content": response_message})
             return response_message
         
@@ -230,10 +230,11 @@ if __name__ == "__main__":
 
     # print('CHATON: Hello Human, im CHATON and here to assist you with an insurance. Tell me about yourself!')
     
-    # for i in range(10):
+    # for i in range(30):
     #     user_input = input("User: ")
     #     json_for_frontend  = send_user_input(user_input, user_id=200)
     #     print(f'INFO: Json Data for frontend: {json_for_frontend}')   
     #     print('CHATON: {}'.format(json_for_frontend['additionalData']['recommendedQuestion']))
 
             
+
