@@ -88,7 +88,7 @@ export class ChatMainComponent implements OnInit {
   ngOnInit() {
     this.chatGpt.getTemporalId().subscribe((temporalId: string) => {
       console.log("Temporal ID: ", temporalId);
-      this.chatGpt.temporalId = temporalId;
+      this.chatGpt.temporalId = Number.parseInt(temporalId);
     });
   }
 }

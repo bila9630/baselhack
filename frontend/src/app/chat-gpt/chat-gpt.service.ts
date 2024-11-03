@@ -8,7 +8,7 @@ import { Observable, tap } from "rxjs";
 export class ChatGptService {
   httpClient = inject(HttpClient);
 
-  temporalId: string = "";
+  temporalId: number = 0;
 
   isDone: boolean = false;
 
@@ -23,7 +23,7 @@ export class ChatGptService {
     );
   }
 
-  askQuestion(question: string, temporalId: string): Observable<any> {
+  askQuestion(question: string, temporalId: number): Observable<any> {
     return this.httpClient
       .post("https://baselbackend.vercel.app/application/chat/extract_data", {
         source: question,
