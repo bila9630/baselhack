@@ -22,13 +22,13 @@
     <main>
       <div class="container">
         <div class="row">
-          <div class="col-7">
+          <div class="col-sm-7">
             <app-chat-history
               (explainQuestion)="explanation = $event; drawer.toggle()"
               (answerFromBubble)="addPrompt($event)"
             />
           </div>
-          <div class="col-5">
+          <div class="col-sm-5">
             <div class="h-75">
               <h3 class="text-center">Customer data</h3>
               <div class="container">
@@ -53,6 +53,9 @@
               <div class="h-50 text-center">
                 <h3>Calculated insurance</h3>
                   <p>Your calculated insurance per year could be: {{chatGpt.pricePerYear}} CHF</p>
+                  <a href="">
+
+                  </a>
                   <button mat-raised-button>Download Application form</button>
               </div>
             }
