@@ -31,7 +31,9 @@ export class SpeechAiComponent implements OnInit, OnDestroy {
       (window as any).webkitSpeechRecognition;
     if (SpeechRecognition) {
       this.recognition = new SpeechRecognition();
+      // Keeps listening even after getting results
       this.recognition.continuous = true;
+      // Provides real-time results as user speaks
       this.recognition.interimResults = true;
 
       this.recognition.onstart = () => {
@@ -84,12 +86,6 @@ export class SpeechAiComponent implements OnInit, OnDestroy {
     this.client.updateSession({
       instructions: `You are a friendly AI assistant for Pax, a life insurance company based in Basel, Switzerland. Your role is to help customers purchase insurance and answer questions about Pax and insurance policies.
 
-Key Guidelines:
-- Be warm, empathetic, and professional in all interactions
-- Focus on understanding and addressing customer needs
-- Explain why information is needed when asked
-- Respect privacy and only collect information with consent
-
 Required Information to Collect (with explanations):
 1. Name - For conversation personalization
 2. Gender (Male/Female/Other) - For risk assessment
@@ -116,18 +112,10 @@ Always:
     // Handle conversation updates
     this.client.on("conversation.updated", (event: any) => {
       const { item, delta } = event;
-      console.log("Full conversation event:", event);
+      const items = this.client.conversation.getItems();
       console.log("Current item:", item);
+      console.log("All items:", items);
 
-      // Log extracted information if available
-      if (item.formatted?.function_calls) {
-        console.log("Extracted information:", item.formatted.function_calls);
-      }
-
-      // Log any structured data if available
-      if (item.formatted?.structured_output) {
-        console.log("Structured output:", item.formatted.structured_output);
-      }
 
       // Skip if we've already processed this item
       if (this.lastProcessedItemId === item.id) {

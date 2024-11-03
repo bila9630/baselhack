@@ -12,6 +12,9 @@ import { MatButton, MatIconButton } from "@angular/material/button";
 import { UserDataService } from "../../user-data/user-data.service";
 import { AsyncPipe } from "@angular/common";
 import { UserPropertiesKeyPipe } from "../../user-properties-key/user-properties-key.pipe";
+import { PromptService } from "../../prompt/service/prompt.service";
+import { take } from "rxjs";
+import { BubbleService } from "../../bubble/bubble.service";
 
 @Component({
   selector: "app-chat-main",
@@ -38,7 +41,49 @@ export class ChatMainComponent implements OnInit {
 
   userDataService = inject(UserDataService);
 
+  promptService = inject(PromptService);
+
+  chatGptService = inject(ChatGptService);
+
+  userService = inject(UserDataService);
+
+  bubbleService = inject(BubbleService);
+
   userData$ = this.userDataService.userData$;
+
+  addPrompt(bubbleText: string) {
+    this.promptService.addNewPromptToChat(bubbleText, "user", []);
+
+    this.chatGptService
+      .askQuestion(bubbleText, this.chatGptService.temporalId)
+      .pipe(take(1))
+      .subscribe((response) => {
+        console.log(response);
+
+        this.addKnownData(response.knownUserInfo);
+        const newChatonPromptId = this.promptService.addNewPromptToChat(
+          response.additionalData.recommendedQuestion ||
+            response.recommendedQuestion,
+          "chaton",
+          response.additionalData.question_explanation,
+        );
+
+        for (let q of response.additionalData.recommendation_bubbles) {
+          this.bubbleService.addNewBubble(q, newChatonPromptId);
+          console.log(q);
+          console.log(this.bubbleService._bubble$.value);
+        }
+      });
+  }
+
+  addKnownData(data: object) {
+    const mappedData = Object.entries(data).map(([key, value]) => ({
+      key,
+      value,
+    }));
+
+    this.userDataService.setUserData(mappedData);
+  }
 
   ngOnInit() {
     this.chatGpt.getTemporalId().subscribe((temporalId: string) => {
