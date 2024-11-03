@@ -52,11 +52,13 @@
             @if (chatGpt.isDone) {
               <div class="h-50 text-center">
                 <h3>Calculated insurance</h3>
-                  <p>Your calculated insurance per year could be: {{chatGpt.pricePerYear}} CHF</p>
-                  <a href="">
-
-                  </a>
+                <p>
+                  Your calculated insurance per year could be:
+                  {{ chatGpt.pricePerYear }} CHF
+                </p>
+                <a href="Lebensversicherung.pdf" target="_blank">
                   <button mat-raised-button>Download Application form</button>
+                </a>
               </div>
             }
           </div>
