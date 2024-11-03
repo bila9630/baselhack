@@ -94,6 +94,12 @@ export class PromptInputComponent implements OnInit {
       });
   }
 
+  addRecommendationBubbles(bubbles: string[]) {
+    for (let bubble of bubbles) {
+      this.bubbleService.addNewBubble(this.question, bubble);
+    }
+  }
+
   addPrompt() {
     this.promptService.addNewPromptToChat(this.userInput, "user", []);
 

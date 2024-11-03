@@ -2,7 +2,7 @@
     <div class="chat-messages">
         @for (msg of chatMessages$ | async; track msg.message) {
             @if (this.msg.author == "chaton") {
-                <div class="d-inline">
+                <div class="d-inline message-wrapper mb-5">
                     <div class="d-flex w-100 justify-content-end align-items-start">
 
                         <div class="d-flex flex-column">
@@ -28,10 +28,10 @@
                 </span>
               </div>
             </span>
-                            <div class=" suggestion-text-container d-flex text-end fxLayoutAlign='end'  ">
-                                <span class="mat-background-accent">Option 1</span>
-                                <span class="mat-background-accent">Option 2</span>
-                                <span class="mat-background-accent">Option 3</span>
+                            <div class="suggestion-container d-flex justify-content-end gap-2 mt-2">
+                                <button mat-button class="suggestion-button">Option 1</button>
+                                <button mat-button class="suggestion-button">Option 2</button>
+                                <button mat-button class="suggestion-button">Option 3</button>
                             </div>
 
                         </div>
@@ -42,7 +42,7 @@
                     </div>
                 </div>
             } @else {
-                <p class="bubble client text-start">{{ msg.message }}</p>
+                <p class="bubble client text-start message-wrapper mb-5">{{ msg.message }}</p>
             }
         }
     </div>
