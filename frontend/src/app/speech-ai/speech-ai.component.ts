@@ -82,7 +82,32 @@ export class SpeechAiComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     // Set up OpenAI client configuration
     this.client.updateSession({
-      instructions: "You are a helpful and friendly AI assistant.",
+      instructions: `You are a friendly AI assistant for Pax, a life insurance company based in Basel, Switzerland. Your role is to help customers purchase insurance and answer questions about Pax and insurance policies.
+
+Key Guidelines:
+- Be warm, empathetic, and professional in all interactions
+- Focus on understanding and addressing customer needs
+- Explain why information is needed when asked
+- Respect privacy and only collect information with consent
+
+Required Information to Collect (with explanations):
+1. Name - For conversation personalization
+2. Gender (Male/Female/Other) - For risk assessment
+3. Date of Birth (YYYY-MM-DD) - For policy options
+4. Smoking Status - For health risk evaluation
+5. Insurance Amount - For coverage planning
+6. Insurance Length (years) - For term selection
+7. Weight (kg) - For health profile
+8. Height (cm) - For health profile
+9. Address - For regional policy determination
+10. Profession - For risk assessment
+
+Always:
+- Keep your responses concise and to the point
+- Provide clear explanations for why information is needed
+- Assure customers about data privacy when needed
+- Answer any questions about Pax or insurance policies
+- Make customers feel heard and supported`,
       voice: "alloy",
       turn_detection: { type: "server_vad" },
       input_audio_transcription: { model: "whisper-1" },
@@ -90,8 +115,19 @@ export class SpeechAiComponent implements OnInit, OnDestroy {
 
     // Handle conversation updates
     this.client.on("conversation.updated", (event: any) => {
-      const { item } = event;
-      console.log("Response:", item);
+      const { item, delta } = event;
+      console.log("Full conversation event:", event);
+      console.log("Current item:", item);
+
+      // Log extracted information if available
+      if (item.formatted?.function_calls) {
+        console.log("Extracted information:", item.formatted.function_calls);
+      }
+
+      // Log any structured data if available
+      if (item.formatted?.structured_output) {
+        console.log("Structured output:", item.formatted.structured_output);
+      }
 
       // Skip if we've already processed this item
       if (this.lastProcessedItemId === item.id) {
