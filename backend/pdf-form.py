@@ -132,8 +132,3 @@ class pdf_export:
         with open(filename, 'wb') as f:
             f.write(buffer.read())
         buffer.close()
-
-
-# Create the pdf_export object and save the PDF
-pdf = pdf_export(user_info_descriptions)
-pdf.save_pdf("Lebensversicherung.pdf")
