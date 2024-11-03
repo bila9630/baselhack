@@ -21,6 +21,10 @@ user_info_descriptions = {
         }
 }
 
+def pdf_creation(user_info_descriptions):
+    pdf = pdf_export(user_info_descriptions)
+    pdf.save_pdf("Lebensversicherung.pdf")
+
 
 class pdf_export:
     def __init__(self, user_info_descriptions):
