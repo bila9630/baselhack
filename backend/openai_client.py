@@ -1,5 +1,6 @@
 
 import os
+import random
 from openai import OpenAI
 from dotenv import load_dotenv
 import json
@@ -13,6 +14,9 @@ OpenAiClient = OpenAI(
 )
 
 def modify_user_prompt(user_input, required_information):
+    info_count = 1
+    if (random.random()>0.8):
+        info_count = 2
     instruction = (
     f"""
 You are an insurance company operator, and you are asking a client for the information necessary for the insurance, use natural conversation skills to embed the missing fields into general questions, so the conversation feels more natural. 
@@ -27,7 +31,7 @@ Here is the information that the client gave you:
 
 Write the answers to the specified questions in json format. 
 If the answer to the specified question is not in the client's response, set the value as null.
-Decide on the next 1 or 2 pieces of information you want to get from the user, and write the keys into the field 'target_information' as an array of strings. Don't choose as a target information fields which you already have.
+Decide on the next {info_count} pieces of information you want to get from the user, and write the keys into the field 'target_information' as an array of strings. Don't choose as a target information fields which you already have.
 Additionally, write a clarifying question that you need to ask the client in the "recommendedQuestion" field, it should not exceed 200 signs. Make the question kind, friendly and short. Don't repeat the same replicas more than 2 times. Don't mention any particular formatings. 
 You must not make any assessment about the customer's characteristics. Except if the customer writes unrealistic information (for example bmi more than 100) then mention it and ask to answer more sinceriously.
 Use active listening.
