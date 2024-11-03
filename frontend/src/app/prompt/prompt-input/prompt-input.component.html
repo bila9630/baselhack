@@ -4,7 +4,7 @@
       <mat-form-field class="example-form-field w-50">
         <input
           matInput
-          (keyup.enter)="addPrompt()"
+          (keydown.enter)="addPrompt()"
           type="text"
           [(ngModel)]="userInput"
         />

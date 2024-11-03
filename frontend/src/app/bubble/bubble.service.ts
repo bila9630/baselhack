@@ -7,13 +7,7 @@ import { BubbleMessage } from "./interface/bubble-message.interface";
   providedIn: "root",
 })
 export class BubbleService {
-  _bubble$ = new BehaviorSubject<BubbleMessage[]>([
-    {
-      question: "test123",
-      referencePromptId: "123",
-      id: ulid(),
-    },
-  ]);
+  _bubble$ = new BehaviorSubject<BubbleMessage[]>([]);
   bubble$ = this._bubble$.asObservable();
 
   addNewBubble(question: string, referencePromptId: string) {
