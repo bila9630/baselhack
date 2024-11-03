@@ -47,7 +47,7 @@ class pdf_export:
         if self.gender.lower() == "male":
             base_age -= 5
         if 16 > self.bmi or self.bim> 41:
-            base_age -= 5
+            base_age -= 3
         death_risk = (age / (5 * base_age)) ** 2
         price = (int(self.insurance_amount) * death_risk) / int(self.insurance_length)
         return price
