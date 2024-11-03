@@ -40,7 +40,6 @@ class pdf_export:
         self.address = user_info_descriptions["address"]
         self.profession = user_info_descriptions["profession"]
         self.additional_risks = user_info_descriptions["additional_risks"]
-        print(self.additional_risks)
 
     @staticmethod
     def AgeCalc(birthDate):
@@ -63,7 +62,6 @@ class pdf_export:
             base_age -= 3*user_info_descriptions["additional_risks"][key]
         death_risk = (age / (5 * base_age)) ** 2
         price = (int(self.insurance_amount) * death_risk) / int(self.insurance_length)
-        print(price)
         return price
 
     def save_pdf(self, filename="user_info.pdf"):
